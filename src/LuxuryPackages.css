@@ -1,0 +1,185 @@
+/* Background 满宽度，内容居中 */
+.luxury-section {
+  background-color: #f9fafb;
+  padding: 80px 0;
+  width: 100vw;
+  margin-left: calc(50% - 50vw); /* ✅ 拉出左右限制 */
+}
+
+.luxury-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  color: #1e3a8a;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+/* Button Group */
+.slider {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.package-card {
+  flex: 0 0 calc(50% - 6px);
+  max-width: calc(50% - 6px);
+  background-color: white;
+  color: #1e3a8a;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 2px solid transparent;
+  min-height: 100px;
+  font-size: 14px;
+}
+
+.package-card.active {
+  background-color: #1e3a8a;
+  color: white;
+  border-color: #1e3a8a;
+}
+
+.package-desc {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+/* Detail Section */
+.package-details {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.detail-block {
+  flex: 1 1 45%;
+}
+
+.detail-block h4 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin-bottom: 12px;
+}
+
+.detail-block ul {
+  list-style: disc;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Price Cards */
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+  text-align: left;
+}
+
+.price-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1e3a8a;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  flex: 0 0 23%;
+  transition: background 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.vehicle-icon {
+  width: 64px;
+  height: auto;
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s ease;
+}
+
+.price-tag:hover {
+  background: white;
+  color: #1e3a8a;
+}
+
+.price-tag:hover .vehicle-icon {
+  filter: brightness(0) invert(0);
+}
+
+.price-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.size-label {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.price-value {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .package-card {
+    flex: 0 0 48%;
+    max-width: 48%;
+    min-height: 80px;
+    padding: 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  .slider {
+    padding: 0 12px; /* ✅ 保证左右有留白 */
+  }
+
+  .package-desc {
+    display: none;
+  }
+
+  .price-row {
+    flex-direction: column;
+  }
+
+  .price-tag {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .vehicle-icon {
+    width: 38px;
+  }
+}
+.package-desc {
+  color: inherit;
+}
+.package-desc {
+  transition: color 0.3s ease, opacity 0.3s ease;
+}

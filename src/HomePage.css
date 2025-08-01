@@ -1,0 +1,232 @@
+/* ---------- Layout & Base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  font-family: 'Helvetica Neue', sans-serif;
+  width: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+#root {
+  width: 100%;
+}
+
+.homepage {
+  padding-top: 112px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.section {
+  padding: 64px 24px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1d4ed8;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: white;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.site-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.site-logo {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.site-logo:hover {
+  transform: scale(1.05);
+}
+
+.site-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.site-nav {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.site-nav a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: #1e40af;
+}
+
+/* ---------- Hero Banner ---------- */
+.hero-banner {
+  position: relative;
+  height: 50vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+}
+
+.hero-content {
+  text-align: center;
+  color: #ffffff;
+  max-width: 800px;
+}
+
+.hero-title {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.hero-button {
+  background-color: #1e3a8a;
+  color: white;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  display: inline-block;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.hero-button:hover {
+  background-color: #274ebd;
+  transform: translateY(-2px);
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  background-color: #1e3a8a;
+  color: white;
+  padding: 32px 0;
+  text-align: center;
+  font-size: 12px;
+  border-top: 1px solid #1e40af;
+}
+
+/* ---------- Animation ---------- */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hide-on-scroll {
+  transform: translateY(-100%);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .site-logo {
+    height: 64px;
+  }
+
+  .site-title {
+    font-size: 18px;
+  }
+
+  .hero-banner {
+    height: 60vh;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .hero-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+.site-logo {
+  height: 100px;
+  width: auto;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Bounce 动画类 */
+.bounce-once {
+  animation: logoBounce 2s ease forwards;
+}
+
+/* 动画定义 */
+@keyframes logoBounce {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.25); }
+  40%  { transform: scale(0.9); }
+  60%  { transform: scale(1.1); }
+  80%  { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}

@@ -1,0 +1,210 @@
+/* Section Layout */
+.pricing-section {
+  padding: 40px 16px;
+  background-color: #ffffff;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 28px;
+  color: #1e3a8a;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+/* Card Grid */
+.pricing-card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Individual Card */
+.pricing-card {
+  background: linear-gradient(to bottom right, #e3ecff, #f9fbff);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  flex: 1 1 calc(50% - 8px);
+  padding: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  animation: fadeInSlide 0.4s ease forwards;
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-card.active {
+  border: 2px solid #1e3a8a;
+  background: #1e3a8a;
+  color: white;
+}
+
+.pricing-card h4 {
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: inherit;
+}
+
+.pricing-card p {
+  font-size: 14px;
+  margin: 4px 0;
+  color: inherit;
+}
+
+/* Animation */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pricing-card-grid {
+    flex-direction: column;
+  }
+
+  .pricing-card {
+    flex: 1 1 100%;
+    padding: 14px;
+  }
+}
+/* 包裹表格的容器（加滚动） */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 表格样式 */
+.pricing-table {
+  width: 100%;
+  min-width: 700px; /* ✅ 关键：确保在小屏幕上产生滚动 */
+  border-collapse: collapse;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.pricing-table th,
+.pricing-table td {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+}
+
+.pricing-table thead th {
+  background-color: #f0f4ff;
+  color: #1e3a8a;
+  font-size: 13px;
+}
+
+.sub-label {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Responsive 优化字体、行高 */
+@media (max-width: 768px) {
+  .pricing-section {
+    padding: 32px 12px;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .pricing-table {
+    font-size: 12px;
+    min-width: 680px;
+  }
+
+  .pricing-table th,
+  .pricing-table td {
+    padding: 8px 10px;
+  }
+
+  .sub-label {
+    font-size: 10px;
+  }
+}
+.accordion-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+details {
+  background-color: #f9fafb;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+details summary {
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+}
+
+.accordion-content {
+  font-size: 13px;
+  padding-top: 8px;
+  color: #374151;
+  line-height: 1.5;
+}
+/* Highlight class for emphasis */
+.em {
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+/* Accordion behavior - hidden on desktop */
+.accordion-view {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+/* Mobile toggle */
+@media (max-width: 768px) {
+  .accordion-view {
+    display: block;
+  }
+  .desktop-only {
+    display: none;
+  }
+
+  .accordion-view details {
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background-color: #f9fafb;
+  }
+
+  .accordion-view summary {
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .accordion-content {
+    padding-top: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}

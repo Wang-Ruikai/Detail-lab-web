@@ -97,7 +97,7 @@ export default function HomePage() {
         <section id="contact" className="section contact-section fade-in">
           <h3 className="section-title">Contact Us</h3>
           <p><strong>📞 Phone:</strong> 021 056 9202</p>
-          <p><strong>📧 Email:</strong> contact@detaillabwash.com</p>
+          <p><strong>📧 Email:</strong> detaillabcarwash@gmail.com</p>
           <p><strong>📍 Service Area:</strong> Auckland - Mobile Car Wash</p>
         </section>
       </div>

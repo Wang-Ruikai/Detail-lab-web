@@ -29,7 +29,7 @@ export default function Pricing() {
         Glass & Mirror Cleaning, Drying with Blower & Towel<br /><br />
         <strong>Interior:</strong><br />
         Interior Vacuum, Plastic Trim Cleaning, Trunk Vacuum,<br />
-        Leather Conditioning, Interior Glass & Piano Panel Polish
+        Leather Conditioning, Interior Glass & Piano Panel Clean
       </td>
       <td><strong>$129</strong></td>
       <td><strong>$149</strong></td>
@@ -47,7 +47,7 @@ export default function Pricing() {
         Glass & Mirror Cleaning, Drying with Blower & Towel<br /><br />
         <strong>Interior Care:</strong><br />
         Interior Vacuum, Plastic Trim Cleaning, Trunk Vacuum,<br />
-        Leather Conditioning, Interior Glass & Piano Panel Polish,<br />
+        Leather Conditioning, Interior Glass & Piano Panel Clean,<br />
         Mat Shampoo Extraction,<br />
         Leather Deep Clean (Horsehair Brush + Agent)
       </td>
@@ -60,11 +60,11 @@ export default function Pricing() {
     <tr><td colSpan="6"><strong>Additional Services</strong></td></tr>
     <tr>
       <td><strong>Fabric Seat Cleaning</strong></td>
-      <td colSpan="5">$20 each seat or $80 full car</td>
+      <td colSpan="5">$25 each seat or $80 full car</td>
     </tr>
     <tr>
       <td><strong>Pet Hair Removal</strong></td>
-      <td colSpan="5">From $30 depending on condition</td>
+      <td colSpan="5">From $50 depending on condition</td>
     </tr>
     <tr>
       <td><strong>Polishing</strong></td>
@@ -87,7 +87,7 @@ export default function Pricing() {
 
             <strong>Interior:</strong><br />
             <span className="em">Interior Vacuum</span>, <span className="em">Plastic Trim Cleaning</span>, <span className="em">Trunk Vacuum</span>,<br />
-            <span className="em">Leather Conditioning</span>, <span className="em">Interior Glass & Piano Panel Polish</span><br /><br />
+            <span className="em">Leather Conditioning</span>, <span className="em">Interior Glass & Piano Clean</span><br /><br />
 
             <strong>Pricing:</strong><br />
             <strong>S:</strong> $129 &nbsp;&nbsp;
@@ -109,7 +109,7 @@ export default function Pricing() {
 
             <strong>Interior Care:</strong><br />
             <span className="em">Interior Vacuum</span>, <span className="em">Plastic Trim Cleaning</span>, <span className="em">Trunk Vacuum</span>,<br />
-            <span className="em">Leather Conditioning</span>, <span className="em">Interior Glass & Piano Panel Polish</span>,<br />
+            <span className="em">Leather Conditioning</span>, <span className="em">Interior Glass & Piano Panel Clean</span>,<br />
             <span className="em">Mat Shampoo Extraction</span>,<br />
             <span className="em">Leather Deep Clean (Horsehair Brush + Agent)</span><br /><br />
 
@@ -124,8 +124,8 @@ export default function Pricing() {
         <details>
           <summary>Additional Services</summary>
           <div className="accordion-content">
-            <strong>Fabric Seat Cleaning:</strong> $20 each seat or $80 full car<br />
-            <strong>Pet Hair Removal:</strong> From $30 depending on condition<br />
+            <strong>Fabric Seat Cleaning:</strong> $25 each seat or $80 full car<br />
+            <strong>Pet Hair Removal:</strong> From $50 depending on condition<br />
             <strong>Polishing:</strong> From $30 (full car polishing available)
           </div>
         </details>

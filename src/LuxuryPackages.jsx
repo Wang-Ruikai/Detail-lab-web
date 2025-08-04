@@ -22,7 +22,7 @@ const PACKAGES = [
       "Plastic Trim Cleaning",
       "Trunk Vacuum",
       "Leather Conditioning",
-      "Interior Glass & Piano Panel Polish"
+      "Interior Glass & Piano Panel Clean"
     ]
   },
   {
@@ -46,7 +46,7 @@ const PACKAGES = [
       "Plastic Trim Cleaning",
       "Trunk Vacuum",
       "Leather Conditioning",
-      "Interior Glass & Piano Panel Polish",
+      "Interior Glass & Piano Panel Clean",
       "Mat Shampoo Extraction",
       "Leather Deep Clean (Horsehair Brush + Agent)"
     ]

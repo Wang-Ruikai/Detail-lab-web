@@ -34,7 +34,7 @@ export default function Pricing() {
       <td><strong>$129</strong></td>
       <td><strong>$149</strong></td>
       <td><strong>$169</strong></td>
-      <td><strong>$179</strong></td>
+      <td><strong>$189</strong></td>
     </tr>
     <tr>
       <td><strong>Package B</strong></td>
@@ -54,7 +54,7 @@ export default function Pricing() {
       <td><strong>$169</strong></td>
       <td><strong>$189</strong></td>
       <td><strong>$209</strong></td>
-      <td><strong>$219</strong></td>
+      <td><strong>$229</strong></td>
     </tr>
 
     <tr><td colSpan="6"><strong>Additional Services</strong></td></tr>
@@ -93,7 +93,7 @@ export default function Pricing() {
             <strong>S:</strong> $129 &nbsp;&nbsp;
             <strong>M:</strong> $149 &nbsp;&nbsp;
             <strong>L:</strong> $169 &nbsp;&nbsp;
-            <strong>XL:</strong> $179
+            <strong>XL:</strong> $189
           </div>
         </details>
 
@@ -117,7 +117,7 @@ export default function Pricing() {
             <strong>S:</strong> $169 &nbsp;&nbsp;
             <strong>M:</strong> $189 &nbsp;&nbsp;
             <strong>L:</strong> $209 &nbsp;&nbsp;
-            <strong>XL:</strong> $219
+            <strong>XL:</strong> $229
           </div>
         </details>
 

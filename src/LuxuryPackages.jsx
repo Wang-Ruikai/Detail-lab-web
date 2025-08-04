@@ -6,7 +6,7 @@ const PACKAGES = [
   {
     id: "A",
     name: "Package A",
-    price: { S: "$129", M: "$149", L: "$169", XL: "$179" },
+    price: { S: "$129", M: "$149", L: "$169", XL: "$189" },
     description: "Complete vehicle precision clean",
     exterior: [
       "Tyre Cleaning",
@@ -28,7 +28,7 @@ const PACKAGES = [
   {
     id: "B",
     name: "Package B",
-    price: { S: "$169", M: "$189", L: "$209", XL: "$219" },
+    price: { S: "$169", M: "$189", L: "$209", XL: "$229" },
     description: "Premium full-detailing service",
     exterior: [
       "Tyre Cleaning",

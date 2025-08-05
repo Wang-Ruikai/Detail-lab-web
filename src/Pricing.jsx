@@ -71,17 +71,18 @@ export default function Pricing() {
       <td colSpan="5">From $40 (full car polishing available)</td>
     </tr>
     <tr>
-      <td><strong>Ceramic Coating</strong></td>
+      <td><strong>Headlight Polishing</strong></td>
+      <td colSpan="5">$25 each</td>
+    </tr>
+    <tr>
+      <td><strong>Duraseal Coating</strong></td>
       <td colSpan="5">From $60</td>
     </tr>
     <tr>
       <td><strong>Oil Film Removal (Glass)</strong></td>
       <td colSpan="5">$40</td>
     </tr>
-    <tr>
-      <td><strong>Headlight Restoration</strong></td>
-      <td colSpan="5">$25 each</td>
-    </tr>
+    
     <tr>
       <td><strong>Vomit Cleanup</strong></td>
       <td colSpan="5">Price varies depending on condition</td>
@@ -144,9 +145,9 @@ export default function Pricing() {
             <strong>Fabric Seat Cleaning:</strong> $35 each<br />
             <strong>Pet Hair Removal:</strong> From $50 depending on condition<br />
             <strong>Polishing:</strong> From $40 (full car polishing available)<br />
-            <strong>Ceramic Coating:</strong> From $60<br />
+            <strong>Headlight Polishing:</strong> $25 each<br />
+            <strong>Duraseal Coating:</strong> From $60<br />
             <strong>Oil Film Removal (Glass):</strong> $40<br />
-            <strong>Headlight Restoration:</strong> $25 each<br />
             <strong>Vomit Cleanup:</strong> Price varies depending on condition
           </div>
         </details>

@@ -13,7 +13,7 @@ const PACKAGES = [
       "Fender High-Pressure Rinse",
       "Tyre Wax",
       "Neutral Shampoo Full Body Wash",
-      "Detailing: Door Frames, Fuel Cap",
+      "Detailing: Grille, Door Frames, Hinges, Fuel Cap",
       "Glass & Mirror Cleaning",
       "Drying with Blower & Towel"
     ],

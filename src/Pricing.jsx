@@ -25,7 +25,7 @@ export default function Pricing() {
       <td>
         <strong>Exterior:</strong><br />
         Tyre Cleaning, Fender High-Pressure Rinse, Tyre Wax,<br />
-        Neutral Shampoo Full Body Wash, Detailing (Door Frames, Fuel Cap),<br />
+        Neutral Shampoo Full Body Wash, Detailing (Grille, Door Frames, Hinges, Fuel Cap),<br />
         Glass & Mirror Cleaning, Drying with Blower & Towel<br /><br />
         <strong>Interior:</strong><br />
         Interior Vacuum, Plastic Trim Cleaning, Trunk Vacuum,<br />
@@ -60,7 +60,7 @@ export default function Pricing() {
     <tr><td colSpan="6"><strong>Additional Services</strong></td></tr>
     <tr>
       <td><strong>Fabric Seat Cleaning</strong></td>
-      <td colSpan="5">$25 each seat or $80 full car</td>
+      <td colSpan="5">$35 each seat </td>
     </tr>
     <tr>
       <td><strong>Pet Hair Removal</strong></td>
@@ -68,7 +68,7 @@ export default function Pricing() {
     </tr>
     <tr>
       <td><strong>Polishing</strong></td>
-      <td colSpan="5">From $30 (full car polishing available)</td>
+      <td colSpan="5">From $40 (full car polishing available)</td>
     </tr>
   </tbody>
 </table>
@@ -82,7 +82,7 @@ export default function Pricing() {
           <div className="accordion-content">
             <strong>Exterior:</strong><br />
             <span className="em">Tyre Cleaning</span>, <span className="em">Fender High-Pressure Rinse</span>, <span className="em">Tyre Wax</span>,<br />
-            <span className="em">Neutral Shampoo Full Body Wash</span>, <span className="em">Detailing</span> (Door Frames, Fuel Cap),<br />
+            <span className="em">Neutral Shampoo Full Body Wash</span>, <span className="em">Detailing</span> (Grille, Door Frames, Hinges, Fuel Cap),<br />
             <span className="em">Glass & Mirror Cleaning</span>, <span className="em">Drying with Blower & Towel</span><br /><br />
 
             <strong>Interior:</strong><br />
@@ -124,9 +124,9 @@ export default function Pricing() {
         <details>
           <summary>Additional Services</summary>
           <div className="accordion-content">
-            <strong>Fabric Seat Cleaning:</strong> $25 each seat or $80 full car<br />
+            <strong>Fabric Seat Cleaning:</strong> $35 each<br />
             <strong>Pet Hair Removal:</strong> From $50 depending on condition<br />
-            <strong>Polishing:</strong> From $30 (full car polishing available)
+            <strong>Polishing:</strong> From $40 (full car polishing available)
           </div>
         </details>
       </div>

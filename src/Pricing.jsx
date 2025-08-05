@@ -60,7 +60,7 @@ export default function Pricing() {
     <tr><td colSpan="6"><strong>Additional Services</strong></td></tr>
     <tr>
       <td><strong>Fabric Seat Cleaning</strong></td>
-      <td colSpan="5">$35 each seat </td>
+      <td colSpan="5">$35 each seat</td>
     </tr>
     <tr>
       <td><strong>Pet Hair Removal</strong></td>
@@ -70,6 +70,23 @@ export default function Pricing() {
       <td><strong>Polishing</strong></td>
       <td colSpan="5">From $40 (full car polishing available)</td>
     </tr>
+    <tr>
+      <td><strong>Ceramic Coating</strong></td>
+      <td colSpan="5">From $60</td>
+    </tr>
+    <tr>
+      <td><strong>Oil Film Removal (Glass)</strong></td>
+      <td colSpan="5">$40</td>
+    </tr>
+    <tr>
+      <td><strong>Headlight Restoration</strong></td>
+      <td colSpan="5">$25 each</td>
+    </tr>
+    <tr>
+      <td><strong>Vomit Cleanup</strong></td>
+      <td colSpan="5">Price varies depending on condition</td>
+    </tr>
+
   </tbody>
 </table>
 
@@ -126,9 +143,14 @@ export default function Pricing() {
           <div className="accordion-content">
             <strong>Fabric Seat Cleaning:</strong> $35 each<br />
             <strong>Pet Hair Removal:</strong> From $50 depending on condition<br />
-            <strong>Polishing:</strong> From $40 (full car polishing available)
+            <strong>Polishing:</strong> From $40 (full car polishing available)<br />
+            <strong>Ceramic Coating:</strong> From $60<br />
+            <strong>Oil Film Removal (Glass):</strong> $40<br />
+            <strong>Headlight Restoration:</strong> $25 each<br />
+            <strong>Vomit Cleanup:</strong> Price varies depending on condition
           </div>
         </details>
+
       </div>
     </section>
   );

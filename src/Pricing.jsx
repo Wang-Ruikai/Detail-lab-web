@@ -9,88 +9,82 @@ export default function Pricing() {
       {/* Desktop table view */}
       <div className="table-wrapper desktop-only">
         <table className="pricing-table">
-  <thead>
-    <tr>
-      <th>Package</th>
-      <th>Service Details</th>
-      <th><strong>S</strong><br /><span className="sub-label">(Sedan)</span></th>
-      <th><strong>M</strong><br /><span className="sub-label">(Wagon/SUV)</span></th>
-      <th><strong>L</strong><br /><span className="sub-label">(7 Seater)</span></th>
-      <th><strong>XL</strong><br /><span className="sub-label">(RV/MPV)</span></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Package A</strong></td>
-      <td>
-        <strong>Exterior:</strong><br />
-        Tyre Cleaning, Fender High-Pressure Rinse, Tyre Wax,<br />
-        Neutral Shampoo Full Body Wash, Detailing (Grille, Door Frames, Hinges, Fuel Cap),<br />
-        Glass & Mirror Cleaning, Drying with Blower & Towel<br /><br />
-        <strong>Interior:</strong><br />
-        Interior Vacuum, Plastic Trim Cleaning, Trunk Vacuum,<br />
-        Leather Conditioning, Interior Glass & Piano Panel Clean
-      </td>
-      <td><strong>$129</strong></td>
-      <td><strong>$149</strong></td>
-      <td><strong>$169</strong></td>
-      <td><strong>$189</strong></td>
-    </tr>
-    <tr>
-      <td><strong>Package B</strong></td>
-      <td>
-        <strong>Exterior Care:</strong><br />
-        Tyre Cleaning, Rim Cleaning, Caliper Cleaning,<br />
-        Fender High-Pressure Rinse, Tyre Wax,<br />
-        Neutral Shampoo Full Body Wash,<br />
-        Detailing: Grille, Door Frames, Hinges, Fuel Cap,<br />
-        Glass & Mirror Cleaning, Drying with Blower & Towel<br /><br />
-        <strong>Interior Care:</strong><br />
-        Interior Vacuum, Plastic Trim Cleaning, Trunk Vacuum,<br />
-        Leather Conditioning, Interior Glass & Piano Panel Clean,<br />
-        Mat Shampoo Extraction,<br />
-        Leather Deep Clean (Horsehair Brush + Agent)
-      </td>
-      <td><strong>$169</strong></td>
-      <td><strong>$189</strong></td>
-      <td><strong>$209</strong></td>
-      <td><strong>$229</strong></td>
-    </tr>
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Service Details</th>
+              <th><strong>S</strong><br /><span className="sub-label">(Sedan)</span></th>
+              <th><strong>M</strong><br /><span className="sub-label">(Wagon/SUV)</span></th>
+              <th><strong>L</strong><br /><span className="sub-label">(7-seater / MPV)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Package A</strong></td>
+              <td>
+                <strong>Exterior:</strong><br />
+                Tyre Cleaning, Fender High-Pressure Rinse, Tyre Wax,<br />
+                Neutral Shampoo Full Body Wash, Detailing (Grille, Door Frames, Hinges, Fuel Cap),<br />
+                Glass & Mirror Cleaning, Drying with Blower & Towel<br /><br />
+                <strong>Interior:</strong><br />
+                Interior Vacuum, Plastic Trim Cleaning, Trunk Vacuum,<br />
+                Leather Conditioning, Interior Glass & Piano Panel Clean
+              </td>
+              <td><strong>$129</strong></td>
+              <td><strong>$149</strong></td>
+              <td><strong>$179</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Package B</strong></td>
+              <td>
+                <strong>Exterior Care:</strong><br />
+                Tyre Cleaning, Rim Cleaning, Caliper Cleaning,<br />
+                Fender High-Pressure Rinse, Tyre Wax,<br />
+                Neutral Shampoo Full Body Wash,<br />
+                Detailing: Grille, Door Frames, Hinges, Fuel Cap,<br />
+                Glass & Mirror Cleaning, Drying with Blower & Towel<br /><br />
+                <strong>Interior Care:</strong><br />
+                Interior Vacuum, Plastic Trim Cleaning, Trunk Vacuum,<br />
+                Leather Conditioning, Interior Glass & Piano Panel Clean,<br />
+                Mat Shampoo Extraction,<br />
+                Leather Deep Clean (Horsehair Brush + Agent)
+              </td>
+              <td><strong>$169</strong></td>
+              <td><strong>$189</strong></td>
+              <td><strong>$219</strong></td>
+            </tr>
 
-    <tr><td colSpan="6"><strong>Additional Services</strong></td></tr>
-    <tr>
-      <td><strong>Fabric Seat Cleaning</strong></td>
-      <td colSpan="5">$35 each seat</td>
-    </tr>
-    <tr>
-      <td><strong>Pet Hair Removal</strong></td>
-      <td colSpan="5">From $50 depending on condition</td>
-    </tr>
-    <tr>
-      <td><strong>Polishing</strong></td>
-      <td colSpan="5">From $40 (full car polishing available)</td>
-    </tr>
-    <tr>
-      <td><strong>Headlight Polishing</strong></td>
-      <td colSpan="5">$25 each</td>
-    </tr>
-    <tr>
-      <td><strong>Duraseal Coating</strong></td>
-      <td colSpan="5">From $60</td>
-    </tr>
-    <tr>
-      <td><strong>Oil Film Removal (Glass)</strong></td>
-      <td colSpan="5">$40</td>
-    </tr>
-    
-    <tr>
-      <td><strong>Vomit Cleanup</strong></td>
-      <td colSpan="5">Price varies depending on condition</td>
-    </tr>
-
-  </tbody>
-</table>
-
+            <tr><td colSpan="5"><strong>Additional Services</strong></td></tr>
+            <tr>
+              <td><strong>Fabric Seat Cleaning</strong></td>
+              <td colSpan="4">$35 each seat</td>
+            </tr>
+            <tr>
+              <td><strong>Pet Hair Removal</strong></td>
+              <td colSpan="4">From $50 depending on condition</td>
+            </tr>
+            <tr>
+              <td><strong>Polishing</strong></td>
+              <td colSpan="4">From $40 (full car polishing available)</td>
+            </tr>
+            <tr>
+              <td><strong>Headlight Polishing</strong></td>
+              <td colSpan="4">$25 each</td>
+            </tr>
+            <tr>
+              <td><strong>Duraseal Coating</strong></td>
+              <td colSpan="4">From $60</td>
+            </tr>
+            <tr>
+              <td><strong>Oil Film Removal (Glass)</strong></td>
+              <td colSpan="4">$40</td>
+            </tr>
+            <tr>
+              <td><strong>Vomit Cleanup</strong></td>
+              <td colSpan="4">Price varies depending on condition</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       {/* Mobile accordion view */}
@@ -110,8 +104,10 @@ export default function Pricing() {
             <strong>Pricing:</strong><br />
             <strong>S:</strong> $129 &nbsp;&nbsp;
             <strong>M:</strong> $149 &nbsp;&nbsp;
-            <strong>L:</strong> $169 &nbsp;&nbsp;
-            <strong>XL:</strong> $189
+            <strong>L:</strong> $179<br /><br />
+
+            <strong>Size Guide:</strong><br />
+            S = Sedan, M = Wagon/SUV, L = 7-seater / MPV
           </div>
         </details>
 
@@ -134,8 +130,10 @@ export default function Pricing() {
             <strong>Pricing:</strong><br />
             <strong>S:</strong> $169 &nbsp;&nbsp;
             <strong>M:</strong> $189 &nbsp;&nbsp;
-            <strong>L:</strong> $209 &nbsp;&nbsp;
-            <strong>XL:</strong> $229
+            <strong>L:</strong> $219<br /><br />
+
+            <strong>Size Guide:</strong><br />
+            S = Sedan, M = Wagon/SUV, L = 7-seater / MPV
           </div>
         </details>
 
@@ -151,8 +149,8 @@ export default function Pricing() {
             <strong>Vomit Cleanup:</strong> Price varies depending on condition
           </div>
         </details>
-
       </div>
+
     </section>
   );
 }

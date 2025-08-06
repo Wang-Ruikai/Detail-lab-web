@@ -6,7 +6,7 @@ const PACKAGES = [
   {
     id: "A",
     name: "Package A",
-    price: { S: "$129", M: "$149", L: "$169", XL: "$189" },
+    price: { S: "$129", M: "$149", L: "$179" },
     description: "Complete vehicle precision clean",
     exterior: [
       "Tyre Cleaning",
@@ -28,7 +28,7 @@ const PACKAGES = [
   {
     id: "B",
     name: "Package B",
-    price: { S: "$169", M: "$189", L: "$209", XL: "$229" },
+    price: { S: "$169", M: "$189", L: "$219" },
     description: "Premium full-detailing service",
     exterior: [
       "Tyre Cleaning",
@@ -56,8 +56,7 @@ const PACKAGES = [
 const SIZE_DETAILS = {
   S: "(Sedan)",
   M: "(Wagon/SUV)",
-  L: "(7 seater)",
-  XL: "(RV/MPV)"
+  L: "(7-seater / MPV)"
 };
 
 export default function LuxuryPackages() {
@@ -118,7 +117,7 @@ export default function LuxuryPackages() {
           </div>
 
           <div className="price-row">
-            {Object.entries(current.price).map(([size, price], idx) => (
+            {["S", "M", "L"].map((size, idx) => (
               <div className="price-tag" key={size}>
                 <img
                   src={`/images/icon_vehicle_${idx + 1}_white.png`}
@@ -126,8 +125,10 @@ export default function LuxuryPackages() {
                   className="vehicle-icon"
                 />
                 <div className="price-info">
-                  <span className="size-label">{size} {SIZE_DETAILS[size]}</span>
-                  <span className="price-value">{price}</span>
+                  <span className="size-label">
+                    {size} {SIZE_DETAILS[size]}
+                  </span>
+                  <span className="price-value">{current.price[size]}</span>
                 </div>
               </div>
             ))}

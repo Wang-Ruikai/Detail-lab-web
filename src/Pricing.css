@@ -68,7 +68,7 @@
   }
 }
 
-/* Responsive */
+/* Responsive for Pricing Card */
 @media (max-width: 768px) {
   .pricing-card-grid {
     flex-direction: column;
@@ -79,16 +79,17 @@
     padding: 14px;
   }
 }
-/* 包裹表格的容器（加滚动） */
+
+/* Table Wrapper (scroll for mobile) */
 .table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 表格样式 */
+/* Pricing Table */
 .pricing-table {
   width: 100%;
-  min-width: 700px; /* ✅ 关键：确保在小屏幕上产生滚动 */
+  min-width: 700px;
   border-collapse: collapse;
   font-size: 14px;
   background-color: #fff;
@@ -114,7 +115,7 @@
   color: #6b7280;
 }
 
-/* Responsive 优化字体、行高 */
+/* Table Responsive Font */
 @media (max-width: 768px) {
   .pricing-section {
     padding: 32px 12px;
@@ -138,73 +139,119 @@
     font-size: 10px;
   }
 }
-.accordion-wrapper {
+
+/* Flat Card View for Mobile Additional Services */
+.flat-list-view {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-details {
-  background-color: #f9fafb;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
+.flat-service-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 14px 16px;
+  transition: transform 0.2s ease;
 }
 
-details summary {
+.flat-service-card:hover {
+  transform: translateY(-2px);
+}
+
+.flat-service-card h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
   font-weight: 600;
   color: #1e3a8a;
-  margin-bottom: 8px;
 }
 
-.accordion-content {
-  font-size: 13px;
-  padding-top: 8px;
+.flat-service-card p {
+  margin: 0;
+  font-size: 14px;
   color: #374151;
-  line-height: 1.5;
-}
-/* Highlight class for emphasis */
-.em {
-  font-weight: 600;
-  color: #1e3a8a;
 }
 
-/* Accordion behavior - hidden on desktop */
+/* Show only on mobile */
+@media (min-width: 769px) {
+  .flat-list-view {
+    display: none;
+  }
+}
+
+/* Hide old accordion if still in use */
 .accordion-view {
   display: none;
 }
+/* 默认隐藏 flat-list */
+.flat-list-view {
+  display: none;
+}
 
+/* 默认显示桌面表格 */
 .desktop-only {
   display: block;
 }
 
-/* Mobile toggle */
+/* ✅ 移动端设置互斥显示 */
 @media (max-width: 768px) {
-  .accordion-view {
-    display: block;
+  .flat-list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
+
   .desktop-only {
     display: none;
   }
+}
+.flat-list-view {
+  display: none;
+  gap: 16px;
+  padding: 0 12px;
+}
 
-  .accordion-view details {
-    margin-bottom: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px 12px;
-    background-color: #f9fafb;
+@media (max-width: 768px) {
+  .flat-list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
-  .accordion-view summary {
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
+  .service-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    padding: 20px 16px;
+    transition: transform 0.3s ease;
+    border-left: 6px solid #1e3a8a;
   }
 
-  .accordion-content {
-    padding-top: 8px;
-    font-size: 13px;
-    line-height: 1.5;
+  .service-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .service-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .service-header .emoji {
+    font-size: 20px;
+  }
+
+  .service-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #1e3a8a;
+  }
+
+  .service-desc {
+    margin: 0;
+    font-size: 14px;
+    color: #374151;
   }
 }

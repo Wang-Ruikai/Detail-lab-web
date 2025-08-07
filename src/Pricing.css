@@ -12,81 +12,12 @@
   margin-bottom: 32px;
 }
 
-/* Card Grid */
-.pricing-card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-/* Individual Card */
-.pricing-card {
-  background: linear-gradient(to bottom right, #e3ecff, #f9fbff);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  flex: 1 1 calc(50% - 8px);
-  padding: 16px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  animation: fadeInSlide 0.4s ease forwards;
-}
-
-.pricing-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.pricing-card.active {
-  border: 2px solid #1e3a8a;
-  background: #1e3a8a;
-  color: white;
-}
-
-.pricing-card h4 {
-  margin-bottom: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: inherit;
-}
-
-.pricing-card p {
-  font-size: 14px;
-  margin: 4px 0;
-  color: inherit;
-}
-
-/* Animation */
-@keyframes fadeInSlide {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive for Pricing Card */
-@media (max-width: 768px) {
-  .pricing-card-grid {
-    flex-direction: column;
-  }
-
-  .pricing-card {
-    flex: 1 1 100%;
-    padding: 14px;
-  }
-}
-
-/* Table Wrapper (scroll for mobile) */
+/* ======= Desktop Table View ======= */
 .table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Pricing Table */
 .pricing-table {
   width: 100%;
   min-width: 700px;
@@ -115,8 +46,16 @@
   color: #6b7280;
 }
 
-/* Table Responsive Font */
+/* Desktop-Only Flag */
+.desktop-only {
+  display: block;
+}
+
 @media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
   .pricing-section {
     padding: 32px 12px;
   }
@@ -140,71 +79,7 @@
   }
 }
 
-/* Flat Card View for Mobile Additional Services */
-.flat-list-view {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.flat-service-card {
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  padding: 14px 16px;
-  transition: transform 0.2s ease;
-}
-
-.flat-service-card:hover {
-  transform: translateY(-2px);
-}
-
-.flat-service-card h4 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1e3a8a;
-}
-
-.flat-service-card p {
-  margin: 0;
-  font-size: 14px;
-  color: #374151;
-}
-
-/* Show only on mobile */
-@media (min-width: 769px) {
-  .flat-list-view {
-    display: none;
-  }
-}
-
-/* Hide old accordion if still in use */
-.accordion-view {
-  display: none;
-}
-/* 默认隐藏 flat-list */
-.flat-list-view {
-  display: none;
-}
-
-/* 默认显示桌面表格 */
-.desktop-only {
-  display: block;
-}
-
-/* ✅ 移动端设置互斥显示 */
-@media (max-width: 768px) {
-  .flat-list-view {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .desktop-only {
-    display: none;
-  }
-}
+/* ======= Mobile Flat Card View ======= */
 .flat-list-view {
   display: none;
   gap: 16px;
@@ -215,43 +90,103 @@
   .flat-list-view {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 14px;
   }
+}
 
-  .service-card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-    padding: 20px 16px;
-    transition: transform 0.3s ease;
-    border-left: 6px solid #1e3a8a;
-  }
+/* Individual Service Card for Mobile */
+.service-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+  transition: transform 0.3s ease;
+  border-left: 6px solid #1e3a8a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; /* ✅ 居中 */
+  justify-content: center;
+}
 
-  .service-card:hover {
-    transform: translateY(-3px);
-  }
+.service-card:hover {
+  transform: translateY(-3px);
+}
 
-  .service-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
+.service-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
 
-  .service-header .emoji {
-    font-size: 20px;
-  }
+.service-header .emoji {
+  font-size: 20px;
+}
 
-  .service-card h4 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    color: #1e3a8a;
-  }
+.service-card h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #1e3a8a;
+}
 
-  .service-desc {
-    margin: 0;
-    font-size: 14px;
-    color: #374151;
-  }
+.service-desc {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+  text-align: center;
+}
+/* Mobile Card - Emoji 固定在左边 */
+.service-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+  transition: transform 0.3s ease;
+  border-left: 6px solid #1e3a8a;
+
+  display: flex;
+  flex-direction: row;         /* 横向布局 */
+  align-items: flex-start;     /* 顶部对齐 */
+  gap: 12px;
+}
+
+.service-card:hover {
+  transform: translateY(-3px);
+}
+
+.service-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 28px;
+}
+
+.service-header .emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.service-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-content h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #1e3a8a;
+  text-align: left;
+}
+
+.service-desc {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+  text-align: left;
 }

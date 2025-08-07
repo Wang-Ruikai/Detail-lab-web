@@ -51,24 +51,77 @@ export default function Pricing() {
       {/* Mobile flat list view */}
       <div className="mobile-only flat-list-view">
         <div className="flat-list-view">
-          {[
-            { icon: "🧼", title: "Fabric Seat Cleaning", desc: "$35 each seat" },
-            { icon: "🐾", title: "Pet Hair Removal", desc: "From $50 depending on condition" },
-            { icon: "✨", title: "Polishing", desc: "From $40 (full car polishing available)" },
-            { icon: "🔆", title: "Headlight Polishing", desc: "$25 each" },
-            { icon: "🛡️", title: "Duraseal Coating", desc: "From $60" },
-            { icon: "🪟", title: "Oil Film Removal (Glass)", desc: "$40" },
-            { icon: "🧽", title: "Vomit Cleanup", desc: "Price varies depending on condition" },
-          ].map((item, index) => (
-            <div className="service-card" key={index}>
-              <div className="service-header">
-                <span className="emoji">{item.icon}</span>
-                <h4>{item.title}</h4>
-              </div>
-              <p className="service-desc">{item.desc}</p>
+          <div className="service-card">
+            <div className="service-header">
+              <span className="emoji">🧼</span>
             </div>
-          ))}
+            <div className="service-content">
+              <h4>Fabric Seat Cleaning</h4>
+              <p className="service-desc">$35 each seat</p>
+            </div>
+          </div>
+
+          <div className="service-card">
+            <div className="service-header">
+              <span className="emoji">🐾</span>
+            </div>
+            <div className="service-content">
+              <h4>Pet Hair Removal</h4>
+              <p className="service-desc">From $50 depending on condition</p>
+            </div>
+          </div>
+
+          <div className="service-card">
+            <div className="service-header">
+              <span className="emoji">✨</span>
+            </div>
+            <div className="service-content">
+              <h4>Polishing</h4>
+              <p className="service-desc">From $40 (full car polishing available)</p>
+            </div>
+          </div>
+
+          <div className="service-card">
+            <div className="service-header">
+              <span className="emoji">🔆</span>
+            </div>
+            <div className="service-content">
+              <h4>Headlight Polishing</h4>
+              <p className="service-desc">$25 each</p>
+            </div>
+          </div>
+
+          <div className="service-card">
+            <div className="service-header">
+              <span className="emoji">🛡️</span>
+            </div>
+            <div className="service-content">
+              <h4>Duraseal Coating</h4>
+              <p className="service-desc">From $60</p>
+            </div>
+          </div>
+
+          <div className="service-card">
+            <div className="service-header">
+              <span className="emoji">🪟</span>
+            </div>
+            <div className="service-content">
+              <h4>Oil Film Removal (Glass)</h4>
+              <p className="service-desc">$40</p>
+            </div>
+          </div>
+
+          <div className="service-card">
+            <div className="service-header">
+              <span className="emoji">🧽</span>
+            </div>
+            <div className="service-content">
+              <h4>Vomit Cleanup</h4>
+              <p className="service-desc">Price varies depending on condition</p>
+            </div>
+          </div>
         </div>
+
 
       </div>
     </section>

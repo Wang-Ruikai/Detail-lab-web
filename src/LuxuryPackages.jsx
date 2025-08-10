@@ -160,7 +160,9 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
       detailChoice: null,
       addons: {},
     });
+
   const setSize = (size) => onChange({ ...value, size });
+
   const toggleAddon = (key) => {
     const prev = value.addons || {};
     const cur = prev[key] || { selected: false, qty: 1 };
@@ -174,6 +176,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
     };
     onChange({ ...value, addons: next });
   };
+
   const changeQty = (key, delta) => {
     const meta = ADDONS.find((a) => a.key === key);
     const max = meta?.max || 4;
@@ -189,7 +192,22 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
   // ✅ 只有非 D 套餐，或 D 套餐已选择 Interior/Exterior 才显示“Add-ons + 明细”
   const canShowExtras = pkg && value.size && (pkg.id !== "D" || !!value.detailChoice);
 
-  // “卡片式”内/外选择的样式（更显眼）
+  // 👉 “座椅清洗在非 C 套餐被选中时”的推荐提示
+  const fabricSelectedOnNonC =
+    pkg?.id !== "C" && Boolean(value.addons?.fabric?.selected);
+
+  // 切换到 C 套餐（保留已选尺寸，清空附加项与 D 的内/外选择）
+  const switchToC = () =>
+    onChange({
+      ...value,
+      packageId: "C",
+      // 保留 size 更符合用户预期
+      size: value.size || null,
+      detailChoice: null,
+      addons: {}, // C 已包含全车织物清洗，清空附加项避免重复
+    });
+
+  // “卡片式”内/外选择样式
   const focusCardBase = {
     display: "inline-flex",
     alignItems: "center",
@@ -251,7 +269,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
         </div>
       </div>
 
-      {/* 尺寸/价格（展示层：该车享折扣时显示划线价） */}
+      {/* 尺寸/价格 */}
       {pkg && (
         <div className="price-row">
           {Object.entries(pkg.price).map(([size, price], idx) => {
@@ -291,7 +309,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
         </div>
       )}
 
-      {/* D 套餐：内/外更显眼的“卡片式”选择（选尺寸后出现） */}
+      {/* D 套餐：内/外选择 */}
       {pkg?.id === "D" && value.size && (
         <div className="detail-block" style={{ marginTop: 14 }}>
           <h4 style={{ marginBottom: 8 }}>Please select your cleaning focus:</h4>
@@ -340,13 +358,49 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
         </div>
       )}
 
-      {/* Add-ons（两列布局）+ 小计 —— 只有 canShowExtras 才显示 */}
+      {/* Add-ons（两列布局）+ 小计 */}
       {canShowExtras && (
         <div className="addon-section">
           <div className="addon-title">Add-ons</div>
+
+          {/* 👉 推荐 C 的提示条 */}
+          {fabricSelectedOnNonC && (
+            <div
+              style={{
+                marginBottom: 12,
+                padding: "10px 12px",
+                borderRadius: 10,
+                background: "#fff7ed",         // 温和橙
+                border: "1px solid #fed7aa",
+                color: "#92400e",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                flexWrap: "wrap",
+              }}
+            >
+              <span>For a full upholstery shampoo, we recommend <strong>Package C – Complete Shampoo Detailing</strong>.</span>
+              <button
+                type="button"
+                onClick={switchToC}
+                style={{
+                  padding: "6px 10px",
+                  borderRadius: 8,
+                  border: "1px solid #2563eb",
+                  background: "#2563eb",
+                  color: "#fff",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Switch to Package C
+              </button>
+            </div>
+          )}
+
           <div className="addon-grid">
             {ADDONS.map((a) => {
-              if (a.key === "fabric" && pkg.id === "C") return null; // C 不显示座椅清洁
+              if (a.key === "fabric" && pkg.id === "C") return null; // C 不显示座椅清洗
               const selected = value.addons?.[a.key]?.selected;
               const qty = value.addons?.[a.key]?.qty || 1;
               return (
@@ -524,24 +578,16 @@ export default function LuxuryPackages() {
   };
 
   const handleBookingSubmit = (payload) => {
-    // 这里对接后端即可
     console.log("BOOKING_PAYLOAD", payload);
-    setShowBooking(false);
-    alert(
-      `Thanks ${payload.name}! We received your booking for ${new Date(
-        payload.dateTimeISO
-      ).toLocaleString()}. Total: $${payload.grandTotal}`
-    );
+    // 这里不再用 alert，交给 BookingForm 的 toast
   };
 
   return (
     <section className="luxury-section" style={{ paddingTop: 32 }}>
       <div className="luxury-container">
-        {/* 标题 + 新人提示 */}
         <h2 className="section-title">Our Premium Packages</h2>
         <p className="section-subtitle">🎉 New customers enjoy $20 off their first vehicle</p>
 
-        {/* 顶部加车按钮 */}
         <div className="top-actions">
           <button className="open-addon-btn" onClick={addVehicle}>
             + Add another vehicle
@@ -574,7 +620,6 @@ export default function LuxuryPackages() {
           </div>
         ))}
 
-        {/* 底部操作栏 */}
         <div className="action-row">
           <button className="open-addon-btn" onClick={addVehicle}>
             + Add another vehicle
@@ -594,7 +639,6 @@ export default function LuxuryPackages() {
         </div>
       </div>
 
-      {/* 预约弹窗 */}
       <BookingModal
         open={showBooking}
         onClose={() => setShowBooking(false)}

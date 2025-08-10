@@ -4,23 +4,138 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import emailjs from "@emailjs/browser";
 
-/**
- * BookingModal
- * - 邮箱验证码（10分钟有效）
- * - 只显示营业时间 09:00–17:00（15 分钟步进）
- * - Address 必填
- * - 提交后发送：客户确认 + 管理员通知
- *
- * 重要：
- * - main.jsx 里务必已 init： emailjs.init({ publicKey: "fpTjoSYVIbOugyUfF" })
- * - EmailJS Security → Domains 包含：本地 http://localhost:5173 和线上两域名
- */
-
-// ===== EmailJS 配置（你的实际值）=====
+// ---- EmailJS（与你项目一致）----
 const SERVICE_ID = "service_g9dym5v";
-const TEMPLATE_ID_CODE = "template_noiq6ou";     // 验证码（模板 To Email = {{to_email}})
-const TEMPLATE_ID_CUSTOMER = "template_9jahz8r"; // 客户确认（模板 To Email = {{email}})
-const TEMPLATE_ID_ADMIN = "template_o7gjjgh";    // 管理员通知（模板里 To Email 写死为 admin 邮箱）
+const TEMPLATE_ID_CODE = "template_noiq6ou";
+const TEMPLATE_ID_CUSTOMER = "template_9jahz8r";
+const TEMPLATE_ID_ADMIN = "template_o7gjjgh";
+
+// ---------- Toast（不改页面布局） ----------
+function Toast({ toast, onClose }) {
+  if (!toast) return null;
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        top: 16,
+        right: 16,
+        zIndex: 9999,
+        background: toast.type === "error" ? "#fee2e2" : "#ecfdf5",
+        color: toast.type === "error" ? "#991b1b" : "#065f46",
+        border: `1px solid ${toast.type === "error" ? "#fecaca" : "#a7f3d0"}`,
+        boxShadow: "0 10px 25px rgba(0,0,0,.15)",
+        borderRadius: 12,
+        padding: "12px 14px",
+        maxWidth: 360,
+        fontWeight: 600,
+      }}
+    >
+      {toast.message}
+    </div>
+  );
+}
+
+// ---------- 提交成功弹窗（不改原主弹窗结构） ----------
+function ResultModal({ data, onClose }) {
+  if (!data) return null;
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15,23,42,.45)",
+        display: "grid",
+        placeItems: "center",
+        zIndex: 9998,
+      }}
+    >
+      <div
+        style={{
+          width: "min(520px, 92vw)",
+          background: "#fff",
+          borderRadius: 16,
+          boxShadow: "0 30px 80px rgba(0,0,0,.35)",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            padding: "18px 20px",
+            borderTop: "6px solid #1e3a8a",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#111827" }}>
+            Booking submitted!
+          </div>
+        </div>
+
+        <div style={{ padding: "14px 20px 2px", color: "#374151", lineHeight: 1.65 }}>
+          <p style={{ margin: "6px 0" }}>
+            Thanks <strong>{data.name}</strong>! We’ve received your booking for:
+          </p>
+          <p style={{ margin: "6px 0", fontWeight: 700 }}>{data.when}</p>
+          <p style={{ margin: "6px 0" }}>
+            A confirmation email has been sent to <strong>{data.email}</strong>.
+          </p>
+          {data.address && (
+            <p style={{ margin: "6px 0" }}>
+              Address: <strong>{data.address}</strong>{" "}
+              {data.map_link && (
+                <a
+                  href={data.map_link}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: "#1e3a8a", textDecoration: "none" }}
+                >
+                  (View on Google Maps)
+                </a>
+              )}
+            </p>
+          )}
+          <p style={{ marginTop: 10 }}>
+            Order ID: <strong>{data.order_id}</strong> ・ Grand Total:{" "}
+            <strong>${data.grand_total}</strong>
+          </p>
+        </div>
+
+        <div
+          style={{
+            padding: 16,
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 10,
+            background: "#fafafa",
+            borderTop: "1px solid #f0f0f0",
+          }}
+        >
+          <button
+            onClick={onClose}
+            className="bk-btn primary"
+            style={{
+              background: "#1e3a8a",
+              color: "#fff",
+              border: "none",
+              borderRadius: 10,
+              padding: "10px 16px",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BookingModal({
   open,
@@ -29,46 +144,40 @@ export default function BookingModal({
   grandTotal = 0,
   orderLines = [],
 }) {
-  // ===== 表单字段 =====
+  // 表单字段
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [dateTime, setDateTime] = useState(null); // 默认空
 
-  // 默认不选时间（输入框为空）
-  const [dateTime, setDateTime] = useState(null);
-
-  // ===== 验证码状态 =====
+  // 验证码状态
   const [codeSent, setCodeSent] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
-  const [resendIn, setResendIn] = useState(0); // 60s 倒计时
+  const [resendIn, setResendIn] = useState(0);
   const [generatedCode, setGeneratedCode] = useState("");
   const [codeInput, setCodeInput] = useState("");
   const [verified, setVerified] = useState(false);
-  const [emailForCode, setEmailForCode] = useState(""); // 发码时的邮箱
-  const [codeSentAt, setCodeSentAt] = useState(null);   // 发码时间戳
+  const [emailForCode, setEmailForCode] = useState("");
+  const [codeSentAt, setCodeSentAt] = useState(null);
 
-  // 60s 倒计时
+  // Toast / 结果弹窗
+  const [toast, setToast] = useState(null);
+  const [resultModal, setResultModal] = useState(null);
+  const showToast = (message, type = "ok", ms = 2400) => {
+    setToast({ message, type });
+    window.clearTimeout(showToast._t);
+    showToast._t = window.setTimeout(() => setToast(null), ms);
+  };
+
+  // 倒计时
   useEffect(() => {
     if (resendIn <= 0) return;
     const t = setInterval(() => setResendIn((s) => s - 1), 1000);
     return () => clearInterval(t);
   }, [resendIn]);
 
-  // 弹窗定位
-  const modalRef = useRef(null);
-  useEffect(() => {
-    if (open && modalRef.current) {
-      const t = setTimeout(() => {
-        try {
-          modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-        } catch {}
-      }, 30);
-      return () => clearTimeout(t);
-    }
-  }, [open]);
-
-  // ===== 校验 =====
+  // 校验
   const phoneOk = useMemo(() => /^\+?[0-9()\-\s]{6,}$/.test(phone.trim()), [phone]);
   const emailOk = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()), [email]);
   const addressOk = useMemo(() => address.trim().length >= 4, [address]);
@@ -79,14 +188,16 @@ export default function BookingModal({
       phoneOk &&
       emailOk &&
       addressOk &&
-      dateTime && dateTime instanceof Date && !isNaN(dateTime.getTime()) &&
+      dateTime &&
+      dateTime instanceof Date &&
+      !isNaN(dateTime.getTime()) &&
       verified
     );
   }, [name, phoneOk, emailOk, addressOk, dateTime, verified]);
 
   if (!open) return null;
 
-  // ===== 仅生成营业时间（09:00–17:00，15 分钟步进）=====
+  // 营业时间 09:00–17:00（15 分钟步进）
   const generateBusinessTimes = (baseDate) => {
     const base = baseDate || new Date();
     const times = [];
@@ -101,17 +212,22 @@ export default function BookingModal({
     return times;
   };
 
-  // ===== 客户邮件的订单明细 HTML（注入 {{{order_table}}}）=====
+  // 订单表 HTML 注入
   function buildOrderTable(lines = []) {
     const rows = (lines || [])
-      .filter(l => l.ready)
-      .map(l => {
+      .filter((l) => l.ready)
+      .map((l) => {
         const addons = (l.addons || [])
-          .map(a => `
+          .map(
+            (a) => `
             <tr>
-              <td style="padding:2px 4px 2px 16px;color:#374151;">• ${a.label}${a.qty>1?` × ${a.qty}`:""}</td>
+              <td style="padding:2px 4px 2px 16px;color:#374151;">• ${a.label}${
+              a.qty > 1 ? ` × ${a.qty}` : ""
+            }</td>
               <td style="padding:2px 4px;text-align:right;white-space:nowrap;color:#374151;">$${a.total}</td>
-            </tr>`).join("");
+            </tr>`
+          )
+          .join("");
 
         return `
           <table style="width:100%;border-collapse:collapse;margin:8px 0;border-bottom:1px solid #eee">
@@ -125,37 +241,38 @@ export default function BookingModal({
               <td style="padding:2px 4px;color:#6b7280">Base</td>
               <td style="padding:2px 4px;text-align:right;white-space:nowrap;color:#6b7280">$${l.base}</td>
             </tr>
-            ${l.discount>0 ? `
+            ${
+              l.discount > 0
+                ? `
               <tr>
                 <td style="padding:2px 4px;color:#0a7a1f">New customer discount</td>
                 <td style="padding:2px 4px;text-align:right;white-space:nowrap;color:#0a7a1f">- $${l.discount}</td>
-              </tr>` : ""}
+              </tr>`
+                : ""
+            }
             ${addons}
           </table>`;
-      }).join("");
+      })
+      .join("");
 
     return rows || `<div style="color:#6b7280">No items</div>`;
   }
 
-  // ===== 发送验证码（模板 To Email = {{to_email}}）=====
+  // 发送验证码
   const handleSendCode = async () => {
     if (!emailOk) {
-      alert("Please enter a valid email first.");
+      showToast("Please enter a valid email first.", "error");
       return;
     }
     setSendingCode(true);
     try {
       const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID_CODE,
-        {
-          to_email: email.trim(),
-          name: name || "Customer",
-          code,
-        }
-      );
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID_CODE, {
+        to_email: email.trim(),
+        name: name || "Customer",
+        code,
+      });
 
       setGeneratedCode(code);
       setEmailForCode(email.trim());
@@ -163,37 +280,37 @@ export default function BookingModal({
       setVerified(false);
       setResendIn(60);
       setCodeSentAt(Date.now());
-      alert("Verification code sent. Please check your inbox (or Spam/Promotions).");
+      showToast("Verification code sent. Check inbox / spam.");
     } catch (err) {
       console.error("EmailJS error:", err?.status, err?.text || err?.message, err);
-      alert("Failed to send the code. Please try again.");
+      showToast("Failed to send the code. Please try again.", "error");
     } finally {
       setSendingCode(false);
     }
   };
 
-  // ===== 校验验证码（10分钟有效）=====
+  // 校验验证码（10分钟有效）
   const handleVerify = () => {
     if (!codeSent) return;
     if (email.trim() !== emailForCode) {
-      alert("The email has changed. Please send the code again.");
+      showToast("Email changed. Please send the code again.", "error");
       return;
     }
     if (!codeSentAt || Date.now() - codeSentAt > 10 * 60 * 1000) {
-      alert("The code has expired. Please resend a new one.");
       setVerified(false);
+      showToast("The code expired. Please resend.", "error");
       return;
     }
     if (codeInput.trim() === generatedCode && generatedCode) {
       setVerified(true);
-      alert("Email verified successfully.");
+      showToast("Email verified.");
     } else {
       setVerified(false);
-      alert("Invalid code. Please try again.");
+      showToast("Invalid code. Please try again.", "error");
     }
   };
 
-  // ===== 提交：发两封邮件（客户 + 管理员）=====
+  // 提交（两封邮件）
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValid) return;
@@ -209,8 +326,12 @@ export default function BookingModal({
     });
 
     const date_time_human = new Date(dateTime).toLocaleString("en-NZ", {
-      year: "numeric", month: "long", day: "numeric",
-      hour: "2-digit", minute: "2-digit", hour12: false,
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     });
     const map_link = address
       ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
@@ -219,217 +340,232 @@ export default function BookingModal({
     const order_table = buildOrderTable(orderLines);
 
     try {
-      // ① 客户确认（模板 To Email = {{email}}）
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID_CUSTOMER,
-        {
-          email: email.trim(),
-          name,
-          phone,
-          date_time_human,
-          address,
-          map_link,
-          order_id,
-          grand_total: grandTotal,
-          order_table,
-        }
-      );
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID_CUSTOMER, {
+        email: email.trim(),
+        name,
+        phone,
+        date_time_human,
+        address,
+        map_link,
+        order_id,
+        grand_total: grandTotal,
+        order_table,
+      });
 
-      // ② 管理员通知（模板 To Email 已写死）
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID_ADMIN,
-        {
-          email: email.trim(), // 作为 Reply-To 等变量
-          name,
-          phone,
-          date_time_human,
-          address,
-          map_link,
-          order_id,
-          grand_total: grandTotal,
-          order_table,
-        }
-      );
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID_ADMIN, {
+        email: email.trim(),
+        name,
+        phone,
+        date_time_human,
+        address,
+        map_link,
+        order_id,
+        grand_total: grandTotal,
+        order_table,
+      });
 
-      alert("Booking submitted! Emails have been sent.");
-      onClose?.();
+      setResultModal({
+        name,
+        email,
+        address,
+        map_link,
+        when: date_time_human,
+        order_id,
+        grand_total: grandTotal,
+      });
     } catch (err) {
       console.error("EmailJS send failed:", err?.status, err?.text || err?.message, err);
-      alert("Failed to send emails. Please try again.");
+      showToast("Failed to send emails. Please try again.", "error");
     }
   };
 
   return (
-    <div className="bk-overlay" role="dialog" aria-modal="true" aria-label="Booking form">
-      <div className="bk-modal" ref={modalRef}>
-        {/* 头部 */}
-        <div className="bk-head">
-          <h3>Booking Information</h3>
-          <button className="bk-close" onClick={onClose} aria-label="Close booking">
-            ×
-          </button>
-        </div>
+    <>
+      <Toast toast={toast} onClose={() => setToast(null)} />
+      <ResultModal
+        data={resultModal}
+        onClose={() => {
+          setResultModal(null);
+          onClose?.();
+        }}
+      />
 
-        {/* 订单摘要 */}
-        <div className="bk-summary">
-          <div className="bk-summary-title">Order summary</div>
-          {orderLines.filter(l => l.ready).map((l) => (
-            <div className="bk-line" key={l.key}>
-              <div className="bk-line-top">
-                <span className="bk-line-title">{l.title}</span>
-                <span className="bk-line-amount">${l.subtotal}</span>
-              </div>
-              <div className="bk-line-sub">
-                <span>{l.pkgName} — {l.size}</span>
-                <span>${l.base}</span>
-              </div>
-              {l.discount > 0 && (
-                <div className="bk-line-sub bk-discount">
-                  <span>New customer discount</span>
-                  <span>- ${l.discount}</span>
-                </div>
-              )}
-              {l.dChoice && (
-                <div className="bk-line-sub">
-                  <span>Cleaning focus</span>
-                  <span>{l.dChoice}</span>
-                </div>
-              )}
-              {l.addons?.length > 0 && l.addons.map((a, i) => (
-                <div className="bk-line-sub" key={i}>
-                  <span>{a.label}{a.qty > 1 ? ` × ${a.qty}` : ""}</span>
-                  <span>${a.total}</span>
+      {/* ✅ 下面保持你原有的布局/样式结构，不动 class */}
+      <div className="bk-overlay" role="dialog" aria-modal="true" aria-label="Booking form">
+        <div className="bk-modal">
+          {/* 头部 */}
+          <div className="bk-head">
+            <h3>Booking Information</h3>
+            <button className="bk-close" onClick={onClose} aria-label="Close booking">
+              ×
+            </button>
+          </div>
+
+          {/* 订单摘要（结构不变） */}
+          <div className="bk-summary">
+            <div className="bk-summary-title">Order summary</div>
+            {orderLines
+              .filter((l) => l.ready)
+              .map((l) => (
+                <div className="bk-line" key={l.key}>
+                  <div className="bk-line-top">
+                    <span className="bk-line-title">{l.title}</span>
+                    <span className="bk-line-amount">${l.subtotal}</span>
+                  </div>
+                  <div className="bk-line-sub">
+                    <span>
+                      {l.pkgName} — {l.size}
+                    </span>
+                    <span>${l.base}</span>
+                  </div>
+                  {l.discount > 0 && (
+                    <div className="bk-line-sub bk-discount">
+                      <span>New customer discount</span>
+                      <span>- ${l.discount}</span>
+                    </div>
+                  )}
+                  {l.dChoice && (
+                    <div className="bk-line-sub">
+                      <span>Cleaning focus</span>
+                      <span>{l.dChoice}</span>
+                    </div>
+                  )}
+                  {l.addons?.length > 0 &&
+                    l.addons.map((a, i) => (
+                      <div className="bk-line-sub" key={i}>
+                        <span>
+                          {a.label}
+                          {a.qty > 1 ? ` × ${a.qty}` : ""}
+                        </span>
+                        <span>${a.total}</span>
+                      </div>
+                    ))}
                 </div>
               ))}
+            <div className="bk-grand">
+              <span>Grand Total</span>
+              <span>${grandTotal}</span>
             </div>
-          ))}
-          <div className="bk-grand">
-            <span>Grand Total</span>
-            <span>${grandTotal}</span>
           </div>
-        </div>
 
-        {/* 表单 */}
-        <form onSubmit={handleSubmit} className="bk-form">
-          <label className="bk-label">
-            Name
-            <input
-              className={`bk-input ${name.trim() ? "" : "is-invalid"}`}
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </label>
-
-          <label className="bk-label">
-            Phone
-            <input
-              className={`bk-input ${phone ? (phoneOk ? "" : "is-invalid") : ""}`}
-              type="tel"
-              placeholder="Enter your phone number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          </label>
-
-          <label className="bk-label" style={{ gridColumn: "1 / -1" }}>
-            Email
-            <div style={{ display: "flex", gap: 8 }}>
+          {/* 表单（结构不变） */}
+          <form onSubmit={handleSubmit} className="bk-form">
+            <label className="bk-label">
+              Name
               <input
-                className={`bk-input ${email ? (emailOk ? "" : "is-invalid") : ""}`}
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setVerified(false); // 改邮箱需重新验证
-                }}
+                className={`bk-input ${name.trim() ? "" : "is-invalid"}`}
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
-                style={{ flex: 1 }}
               />
-              <button
-                type="button"
-                className="bk-btn ghost"
-                onClick={handleSendCode}
-                disabled={!emailOk || sendingCode || resendIn > 0}
-                title={!emailOk ? "Enter a valid email first" : ""}
-              >
-                {sendingCode ? "Sending..." : resendIn > 0 ? `Resend (${resendIn}s)` : "Send code"}
-              </button>
-            </div>
+            </label>
 
-            {codeSent && (
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+            <label className="bk-label">
+              Phone
+              <input
+                className={`bk-input ${phone ? (phoneOk ? "" : "is-invalid") : ""}`}
+                type="tel"
+                placeholder="Enter your phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </label>
+
+            <label className="bk-label" style={{ gridColumn: "1 / -1" }}>
+              Email
+              <div style={{ display: "flex", gap: 8 }}>
                 <input
-                  className="bk-input"
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={6}
-                  placeholder="Enter 6-digit code"
-                  value={codeInput}
-                  onChange={(e) => setCodeInput(e.target.value.replace(/\D/g, ""))}
+                  className={`bk-input ${email ? (emailOk ? "" : "is-invalid") : ""}`}
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setVerified(false);
+                  }}
+                  required
                   style={{ flex: 1 }}
                 />
                 <button
                   type="button"
-                  className="bk-btn primary"
-                  onClick={handleVerify}
-                  disabled={!codeInput || codeInput.length < 6 || !codeSent}
+                  className="bk-btn ghost"
+                  onClick={handleSendCode}
+                  disabled={!emailOk || sendingCode || resendIn > 0}
+                  title={!emailOk ? "Enter a valid email first" : ""}
                 >
-                  Verify
+                  {sendingCode ? "Sending..." : resendIn > 0 ? `Resend (${resendIn}s)` : "Send code"}
                 </button>
               </div>
-            )}
-            {verified && (
-              <div style={{ marginTop: 6, color: "#0a7a1f", fontWeight: 600 }}>
-                ✅ Email verified
-              </div>
-            )}
-          </label>
 
-          <label className="bk-label" style={{ gridColumn: "1 / -1" }}>
-            Address
-            <input
-              className={`bk-input ${address ? (addressOk ? "" : "is-invalid") : ""}`}
-              type="text"
-              placeholder="Enter the address for the service"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-          </label>
+              {codeSent && (
+                <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                  <input
+                    className="bk-input"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="Enter 6-digit code"
+                    value={codeInput}
+                    onChange={(e) => setCodeInput(e.target.value.replace(/\D/g, ""))}
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    className="bk-btn primary"
+                    onClick={handleVerify}
+                    disabled={!codeInput || codeInput.length < 6 || !codeSent}
+                  >
+                    Verify
+                  </button>
+                </div>
+              )}
+              {verified && (
+                <div style={{ marginTop: 6, color: "#0a7a1f", fontWeight: 600 }}>✅ Email verified</div>
+              )}
+            </label>
 
-          <label className="bk-label">
-            Preferred date &amp; time
-            <DatePicker
-              selected={dateTime}                                // 为空时显示为空
-              onChange={(d) => d && setDateTime(d)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy HH:mm"
-              className="bk-input"
-              minDate={new Date()}
-              includeTimes={generateBusinessTimes(dateTime || new Date())} // 仅显示营业时间
-              placeholderText="Pick date & time"
-            />
-          </label>
+            <label className="bk-label" style={{ gridColumn: "1 / -1" }}>
+              Address
+              <input
+                className={`bk-input ${address ? (addressOk ? "" : "is-invalid") : ""}`}
+                type="text"
+                placeholder="Enter the address for the service"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+              />
+            </label>
 
-          <div className="bk-actions" style={{ gridColumn: "1 / -1" }}>
-            <button type="button" className="bk-btn ghost" onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className="bk-btn primary" disabled={!isValid}>
-              Submit booking
-            </button>
-          </div>
-        </form>
+            <label className="bk-label">
+              Preferred date &amp; time
+              <DatePicker
+                selected={dateTime}
+                onChange={(d) => d && setDateTime(d)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy HH:mm"
+                className="bk-input"
+                minDate={new Date()}
+                includeTimes={generateBusinessTimes(dateTime || new Date())}
+                placeholderText="Pick date & time"
+              />
+            </label>
+
+            <div className="bk-actions" style={{ gridColumn: "1 / -1" }}>
+              <button type="button" className="bk-btn ghost" onClick={onClose}>
+                Cancel
+              </button>
+              <button type="submit" className="bk-btn primary" disabled={!isValid}>
+                Submit booking
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

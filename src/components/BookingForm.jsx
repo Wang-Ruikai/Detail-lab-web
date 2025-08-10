@@ -10,14 +10,17 @@ import emailjs from "@emailjs/browser";
  * - 只显示营业时间 09:00–17:00（15 分钟步进）
  * - Address 必填
  * - 提交后发送：客户确认 + 管理员通知
+ *
+ * 重要：
+ * - main.jsx 里务必已 init： emailjs.init({ publicKey: "fpTjoSYVIbOugyUfF" })
+ * - EmailJS Security → Domains 包含：本地 http://localhost:5173 和线上两域名
  */
 
 // ===== EmailJS 配置（你的实际值）=====
 const SERVICE_ID = "service_g9dym5v";
-const PUBLIC_KEY = "fpTjoSYVIbOugyUfF";
-const TEMPLATE_ID_CODE = "template_n0iq60u";     // 验证码
-const TEMPLATE_ID_CUSTOMER = "template_9jahz8r"; // 客户确认（To Email = {{email}})
-const TEMPLATE_ID_ADMIN = "template_o7gjigh";    // 管理员通知（模板里 To Email 写死为 admin 邮箱）
+const TEMPLATE_ID_CODE = "template_noiq6ou";     // 验证码（模板 To Email = {{to_email}})
+const TEMPLATE_ID_CUSTOMER = "template_9jahz8r"; // 客户确认（模板 To Email = {{email}})
+const TEMPLATE_ID_ADMIN = "template_o7gjjgh";    // 管理员通知（模板里 To Email 写死为 admin 邮箱）
 
 export default function BookingModal({
   open,
@@ -32,22 +35,18 @@ export default function BookingModal({
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
 
-  // 默认向后推 2 小时（四舍五入到 15 分钟）
-  const [dateTime, setDateTime] = useState(() => {
-    const d = new Date();
-    d.setHours(d.getHours() + 2, 0, 0, 0);
-    return d;
-  });
+  // 默认不选时间（输入框为空）
+  const [dateTime, setDateTime] = useState(null);
 
   // ===== 验证码状态 =====
   const [codeSent, setCodeSent] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
-  const [resendIn, setResendIn] = useState(0);
+  const [resendIn, setResendIn] = useState(0); // 60s 倒计时
   const [generatedCode, setGeneratedCode] = useState("");
   const [codeInput, setCodeInput] = useState("");
   const [verified, setVerified] = useState(false);
-  const [emailForCode, setEmailForCode] = useState("");
-  const [codeSentAt, setCodeSentAt] = useState(null);
+  const [emailForCode, setEmailForCode] = useState(""); // 发码时的邮箱
+  const [codeSentAt, setCodeSentAt] = useState(null);   // 发码时间戳
 
   // 60s 倒计时
   useEffect(() => {
@@ -80,20 +79,20 @@ export default function BookingModal({
       phoneOk &&
       emailOk &&
       addressOk &&
-      dateTime instanceof Date &&
-      !isNaN(dateTime.getTime()) &&
+      dateTime && dateTime instanceof Date && !isNaN(dateTime.getTime()) &&
       verified
     );
   }, [name, phoneOk, emailOk, addressOk, dateTime, verified]);
 
   if (!open) return null;
 
-  // ===== 生成营业时间列表（09:00–17:00，15 分钟步进，仅显示这些时间）=====
+  // ===== 仅生成营业时间（09:00–17:00，15 分钟步进）=====
   const generateBusinessTimes = (baseDate) => {
+    const base = baseDate || new Date();
     const times = [];
-    const start = new Date(baseDate || new Date());
+    const start = new Date(base);
     start.setHours(9, 0, 0, 0);
-    const end = new Date(baseDate || new Date());
+    const end = new Date(base);
     end.setHours(17, 0, 0, 0);
     while (start <= end) {
       times.push(new Date(start));
@@ -102,7 +101,7 @@ export default function BookingModal({
     return times;
   };
 
-  // ===== 订单明细 HTML（注入 {{{order_table}}}）=====
+  // ===== 客户邮件的订单明细 HTML（注入 {{{order_table}}}）=====
   function buildOrderTable(lines = []) {
     const rows = (lines || [])
       .filter(l => l.ready)
@@ -138,7 +137,7 @@ export default function BookingModal({
     return rows || `<div style="color:#6b7280">No items</div>`;
   }
 
-  // ===== 发送验证码（模板 To Email 用 {{to_email}}）=====
+  // ===== 发送验证码（模板 To Email = {{to_email}}）=====
   const handleSendCode = async () => {
     if (!emailOk) {
       alert("Please enter a valid email first.");
@@ -152,11 +151,10 @@ export default function BookingModal({
         SERVICE_ID,
         TEMPLATE_ID_CODE,
         {
-          to_email: email.trim(), // 模板右侧 To Email = {{to_email}}
+          to_email: email.trim(),
           name: name || "Customer",
           code,
-        },
-        { publicKey: PUBLIC_KEY }
+        }
       );
 
       setGeneratedCode(code);
@@ -167,7 +165,7 @@ export default function BookingModal({
       setCodeSentAt(Date.now());
       alert("Verification code sent. Please check your inbox (or Spam/Promotions).");
     } catch (err) {
-      console.error(err);
+      console.error("EmailJS error:", err?.status, err?.text || err?.message, err);
       alert("Failed to send the code. Please try again.");
     } finally {
       setSendingCode(false);
@@ -195,12 +193,11 @@ export default function BookingModal({
     }
   };
 
-  // ===== 提交：发两封邮件 =====
+  // ===== 提交：发两封邮件（客户 + 管理员）=====
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValid) return;
 
-    // 回传给父组件（如需落库等）
     onSubmit?.({
       name: name.trim(),
       phone: phone.trim(),
@@ -211,7 +208,6 @@ export default function BookingModal({
       orderLines,
     });
 
-    // 公共变量
     const date_time_human = new Date(dateTime).toLocaleString("en-NZ", {
       year: "numeric", month: "long", day: "numeric",
       hour: "2-digit", minute: "2-digit", hour12: false,
@@ -228,25 +224,6 @@ export default function BookingModal({
         SERVICE_ID,
         TEMPLATE_ID_CUSTOMER,
         {
-          email: email.trim(), // 收件人
-          name,
-          phone,
-          date_time_human,
-          address,
-          map_link,
-          order_id,
-          grand_total: grandTotal,
-          order_table, // 三花括号渲染
-        },
-        { publicKey: PUBLIC_KEY }
-      );
-
-      // ② 管理员通知（模板 To Email 已写死 → 无需传收件人）
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID_ADMIN,
-        {
-          // 模板里 Reply-To 用 {{email}}，这里传客户邮箱
           email: email.trim(),
           name,
           phone,
@@ -256,14 +233,30 @@ export default function BookingModal({
           order_id,
           grand_total: grandTotal,
           order_table,
-        },
-        { publicKey: PUBLIC_KEY }
+        }
+      );
+
+      // ② 管理员通知（模板 To Email 已写死）
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID_ADMIN,
+        {
+          email: email.trim(), // 作为 Reply-To 等变量
+          name,
+          phone,
+          date_time_human,
+          address,
+          map_link,
+          order_id,
+          grand_total: grandTotal,
+          order_table,
+        }
       );
 
       alert("Booking submitted! Emails have been sent.");
       onClose?.();
     } catch (err) {
-      console.error("EmailJS send failed:", err);
+      console.error("EmailJS send failed:", err?.status, err?.text || err?.message, err);
       alert("Failed to send emails. Please try again.");
     }
   };
@@ -414,7 +407,7 @@ export default function BookingModal({
           <label className="bk-label">
             Preferred date &amp; time
             <DatePicker
-              selected={dateTime}
+              selected={dateTime}                                // 为空时显示为空
               onChange={(d) => d && setDateTime(d)}
               showTimeSelect
               timeFormat="HH:mm"
@@ -422,7 +415,7 @@ export default function BookingModal({
               dateFormat="MMMM d, yyyy HH:mm"
               className="bk-input"
               minDate={new Date()}
-              includeTimes={generateBusinessTimes(dateTime)} // 仅显示营业时间
+              includeTimes={generateBusinessTimes(dateTime || new Date())} // 仅显示营业时间
               placeholderText="Pick date & time"
             />
           </label>

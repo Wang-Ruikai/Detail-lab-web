@@ -18,7 +18,7 @@ export default function Pricing() {
           <tbody>
             <tr>
               <td><strong>Fabric Seat Cleaning</strong></td>
-              <td>$35 each seat</td>
+              <td>$30 each seat</td>
             </tr>
             <tr>
               <td><strong>Pet Hair Removal</strong></td>
@@ -57,7 +57,7 @@ export default function Pricing() {
             </div>
             <div className="service-content">
               <h4>Fabric Seat Cleaning</h4>
-              <p className="service-desc">$35 each seat</p>
+              <p className="service-desc">$30 each seat</p>
             </div>
           </div>
 

@@ -1,7 +1,5 @@
-// src/LuxuryPackages.jsx
 import React, { useMemo, useState } from "react";
 import "./LuxuryPackages.css";
-import BookingModal from "./components/BookingForm.jsx";
 
 const NEW_USER_DISCOUNT = 20;
 
@@ -12,20 +10,11 @@ const PACKAGES = [
     description: "Complete vehicle precision clean",
     price: { S: 129, M: 149, L: 179 },
     exterior: [
-      "Tyre Cleaning",
-      "Fender High-Pressure Rinse",
-      "Tyre Wax",
-      "Neutral Shampoo Full Body Wash",
-      "Detailing: Grille, Door Frames, Hinges, Fuel Cap",
-      "Glass & Mirror Cleaning",
-      "Drying with Blower & Towel",
+      "Tyre Cleaning","Fender High-Pressure Rinse","Tyre Wax","Neutral Shampoo Full Body Wash",
+      "Detailing: Grille, Door Frames, Hinges, Fuel Cap","Glass & Mirror Cleaning","Drying with Blower & Towel"
     ],
     interior: [
-      "Interior Vacuum",
-      "Plastic Trim Cleaning",
-      "Trunk Vacuum",
-      "Leather Conditioning",
-      "Interior Glass & Piano Panel Clean",
+      "Interior Vacuum","Plastic Trim Cleaning","Trunk Vacuum","Leather Conditioning","Interior Glass & Piano Panel Clean"
     ],
   },
   {
@@ -34,24 +23,12 @@ const PACKAGES = [
     description: "Premium full-detailing service",
     price: { S: 169, M: 189, L: 219 },
     exterior: [
-      "Tyre Cleaning",
-      "Rim Cleaning",
-      "Caliper Cleaning",
-      "Fender High-Pressure Rinse",
-      "Tyre Wax",
-      "Neutral Shampoo Full Body Wash",
-      "Detailing: Grille, Door Frames, Hinges, Fuel Cap",
-      "Glass & Mirror Cleaning",
-      "Drying with Blower & Towel",
+      "Tyre Cleaning","Rim Cleaning","Caliper Cleaning","Fender High-Pressure Rinse","Tyre Wax",
+      "Neutral Shampoo Full Body Wash","Detailing: Grille, Door Frames, Hinges, Fuel Cap","Glass & Mirror Cleaning","Drying with Blower & Towel"
     ],
     interior: [
-      "Interior Vacuum",
-      "Plastic Trim Cleaning",
-      "Trunk Vacuum",
-      "Leather Conditioning",
-      "Interior Glass & Piano Panel Clean",
-      "Mat Shampoo Extraction",
-      "Leather Deep Clean (Horsehair Brush + Agent)",
+      "Interior Vacuum","Plastic Trim Cleaning","Trunk Vacuum","Leather Conditioning",
+      "Interior Glass & Piano Panel Clean","Mat Shampoo Extraction","Leather Deep Clean (Horsehair Brush + Agent)"
     ],
   },
   {
@@ -60,31 +37,15 @@ const PACKAGES = [
     description: "Complete Shampoo Detailing",
     price: { S: 229, M: 249, L: 279 },
     exterior: [
-      "Tyre Cleaning",
-      "Rim Cleaning",
-      "Caliper Cleaning",
-      "Fender High-Pressure Rinse",
-      "Tyre Wax",
-      "Neutral Shampoo Full Body Wash",
-      "Detailing: Grille, Door Frames, Hinges, Fuel Cap",
-      "Glass & Mirror Cleaning",
-      "Drying with Blower & Towel",
+      "Tyre Cleaning","Rim Cleaning","Caliper Cleaning","Fender High-Pressure Rinse","Tyre Wax",
+      "Neutral Shampoo Full Body Wash","Detailing: Grille, Door Frames, Hinges, Fuel Cap","Glass & Mirror Cleaning","Drying with Blower & Towel"
     ],
     interior: [
-      "Interior Vacuum",
-      "Plastic Trim Cleaning",
-      "Trunk Vacuum",
-      "Leather Conditioning",
-      "Interior Glass & Piano Panel Clean",
-      "Mat Shampoo Extraction",
-      "Leather Deep Clean (Horsehair Brush + Agent)",
+      "Interior Vacuum","Plastic Trim Cleaning","Trunk Vacuum","Leather Conditioning",
+      "Interior Glass & Piano Panel Clean","Mat Shampoo Extraction","Leather Deep Clean (Horsehair Brush + Agent)"
     ],
     upholstery: [
-      "All Seating Areas",
-      "Floor Surfaces",
-      "Mats & Carpet",
-      "Boot Area",
-      "Door Panels (if applicable)",
+      "All Seating Areas","Floor Surfaces","Mats & Carpet","Boot Area","Door Panels (if applicable)"
     ],
   },
   {
@@ -93,20 +54,11 @@ const PACKAGES = [
     description: "Interior or Exterior Only (choose one)",
     price: { S: 69, M: 79, L: 99 },
     exterior: [
-      "Tyre Cleaning",
-      "Fender High-Pressure Rinse",
-      "Tyre Wax",
-      "Neutral Shampoo Full Body Wash",
-      "Detailing: Grille, Door Frames, Hinges, Fuel Cap",
-      "Glass & Mirror Cleaning",
-      "Drying with Blower & Towel",
+      "Tyre Cleaning","Fender High-Pressure Rinse","Tyre Wax","Neutral Shampoo Full Body Wash",
+      "Detailing: Grille, Door Frames, Hinges, Fuel Cap","Glass & Mirror Cleaning","Drying with Blower & Towel"
     ],
     interior: [
-      "Interior Vacuum",
-      "Plastic Trim Cleaning",
-      "Trunk Vacuum",
-      "Leather Conditioning",
-      "Interior Glass & Piano Panel Clean",
+      "Interior Vacuum","Plastic Trim Cleaning","Trunk Vacuum","Leather Conditioning","Interior Glass & Piano Panel Clean"
     ],
   },
 ];
@@ -123,9 +75,9 @@ const ADDONS = [
   { key: "vomit", name: "Vomit Cleanup", price: 0 },
 ];
 
-/* ===================== 单车卡片 ===================== */
+/* ---------- 单车卡片 ---------- */
 function VehicleCard({ value, onChange, showDiscountOnCards }) {
-  const pkg = PACKAGES.find((p) => p.id === value.packageId);
+  const pkg = PACKAGES.find(p => p.id === value.packageId);
 
   const basePriceRaw = pkg && value.size ? pkg.price[value.size] : 0;
   const discountedBase = Math.max(
@@ -137,45 +89,32 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
   const addonLines = addonEntries
     .filter(([, v]) => v?.selected)
     .map(([k, v]) => {
-      const meta = ADDONS.find((a) => a.key === k);
+      const meta = ADDONS.find(a => a.key === k);
       const qty = meta?.quantity ? (v.qty || 1) : 1;
       const lineTotal = (meta?.price || 0) * qty;
-      return {
-        key: k,
-        label: meta?.label || meta?.name,
-        qty,
-        price: meta?.price || 0,
-        lineTotal,
-      };
+      return { key: k, label: meta?.label || meta?.name, qty, price: meta?.price || 0, lineTotal };
     });
 
   const addonsSubtotal = addonLines.reduce((s, l) => s + l.lineTotal, 0);
   const vehicleTotal = discountedBase + addonsSubtotal;
 
   const setPackage = (id) =>
-    onChange({
-      ...value,
-      packageId: id,
-      size: null,
-      detailChoice: null,
-      addons: {},
-    });
+    onChange({ ...value, packageId: id, size: null, detailChoice: null, addons: {} });
+
   const setSize = (size) => onChange({ ...value, size });
+
   const toggleAddon = (key) => {
     const prev = value.addons || {};
     const cur = prev[key] || { selected: false, qty: 1 };
     const next = {
       ...prev,
-      [key]: {
-        ...cur,
-        selected: !cur.selected,
-        qty: cur.selected ? 1 : cur.qty || 1,
-      },
+      [key]: { ...cur, selected: !cur.selected, qty: cur.selected ? 1 : cur.qty || 1 },
     };
     onChange({ ...value, addons: next });
   };
+
   const changeQty = (key, delta) => {
-    const meta = ADDONS.find((a) => a.key === key);
+    const meta = ADDONS.find(a => a.key === key);
     const max = meta?.max || 4;
     const prev = value.addons || {};
     const cur = prev[key] || { selected: true, qty: 1 };
@@ -184,29 +123,6 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
       ...value,
       addons: { ...prev, [key]: { ...cur, selected: true, qty: newQty } },
     });
-  };
-
-  // ✅ 只有非 D 套餐，或 D 套餐已选择 Interior/Exterior 才显示“Add-ons + 明细”
-  const canShowExtras = pkg && value.size && (pkg.id !== "D" || !!value.detailChoice);
-
-  // “卡片式”内/外选择的样式（更显眼）
-  const focusCardBase = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 8,
-    padding: "10px 14px",
-    borderRadius: 10,
-    border: "2px solid #e5e7eb",
-    background: "#fff",
-    cursor: "pointer",
-    fontWeight: 700,
-    color: "#1e3a8a",
-    userSelect: "none",
-  };
-  const focusCardActive = {
-    borderColor: "#1e3a8a",
-    boxShadow: "0 6px 16px rgba(30,58,138,.15)",
-    background: "#ecf3ff",
   };
 
   return (
@@ -225,33 +141,25 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
         ))}
       </div>
 
-      {/* 服务清单 */}
+      {/* 明细清单 */}
       <div className="columns">
         <div className="detail-block">
           <h4>Exterior Care</h4>
           <ul>
-            {(pkg?.id === "D" && value.detailChoice === "Interior"
-              ? []
-              : pkg?.exterior || []
-            ).map((item, i) => (
-              <li key={`ext-${i}`}>{item}</li>
-            ))}
+            {(pkg?.id === "D" && value.detailChoice === "Interior" ? [] : (pkg?.exterior || []))
+              .map((item, i) => <li key={`ext-${i}`}>{item}</li>)}
           </ul>
         </div>
         <div className="detail-block">
           <h4>Interior Care</h4>
           <ul>
-            {(pkg?.id === "D" && value.detailChoice === "Exterior"
-              ? []
-              : pkg?.interior || []
-            ).map((item, i) => (
-              <li key={`int-${i}`}>{item}</li>
-            ))}
+            {(pkg?.id === "D" && value.detailChoice === "Exterior" ? [] : (pkg?.interior || []))
+              .map((item, i) => <li key={`int-${i}`}>{item}</li>)}
           </ul>
         </div>
       </div>
 
-      {/* 尺寸/价格（展示层：该车享折扣时显示划线价） */}
+      {/* 尺寸/价格（展示层：如果这辆车是显示折扣的，就显示划线 + 折后） */}
       {pkg && (
         <div className="price-row">
           {Object.entries(pkg.price).map(([size, price], idx) => {
@@ -291,59 +199,40 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
         </div>
       )}
 
-      {/* D 套餐：内/外更显眼的“卡片式”选择（选尺寸后出现） */}
+      {/* D 套餐：内/外选择（选尺寸后出现） */}
       {pkg?.id === "D" && value.size && (
-        <div className="detail-block" style={{ marginTop: 14 }}>
-          <h4 style={{ marginBottom: 8 }}>Please select your cleaning focus:</h4>
-
-          <div className="choice-row" style={{ gap: 12 }}>
-            <label
-              style={{
-                ...focusCardBase,
-                ...(value.detailChoice === "Interior" ? focusCardActive : {}),
-              }}
-            >
+        <div className="detail-block" style={{ marginTop: 12 }}>
+          <h4>Please select your cleaning focus:</h4>
+          <div className="choice-row">
+            <label>
               <input
                 type="radio"
                 name={`detailChoice-${value.uid}`}
                 value="Interior"
                 checked={value.detailChoice === "Interior"}
                 onChange={(e) => onChange({ ...value, detailChoice: e.target.value })}
-                style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
               />
-              <span role="img" aria-label="interior">🧼</span> Interior
+              Interior
             </label>
-
-            <label
-              style={{
-                ...focusCardBase,
-                ...(value.detailChoice === "Exterior" ? focusCardActive : {}),
-              }}
-            >
+            <label style={{ marginLeft: 16 }}>
               <input
                 type="radio"
                 name={`detailChoice-${value.uid}`}
                 value="Exterior"
                 checked={value.detailChoice === "Exterior"}
                 onChange={(e) => onChange({ ...value, detailChoice: e.target.value })}
-                style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
               />
-              <span role="img" aria-label="exterior">🚿</span> Exterior
+              Exterior
             </label>
           </div>
-
-          {!value.detailChoice && (
-            <div style={{ marginTop: 10, color: "#9ca3af", fontSize: 14 }}>
-              Select <strong>Interior</strong> or <strong>Exterior</strong> to continue…
-            </div>
-          )}
         </div>
       )}
 
-      {/* Add-ons（两列布局）+ 小计 —— 只有 canShowExtras 才显示 */}
-      {canShowExtras && (
+      {/* Add-ons */}
+      {pkg && value.size && (
         <div className="addon-section">
           <div className="addon-title">Add-ons</div>
+
           <div className="addon-grid">
             {ADDONS.map((a) => {
               if (a.key === "fabric" && pkg.id === "C") return null; // C 不显示座椅清洁
@@ -373,47 +262,29 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
 
           {/* 小计 */}
           <div className="total-price-display">
-            <div className="total-row">
-              <span>Base price</span>
-              <span>${basePriceRaw}</span>
-            </div>
-
+            <div className="total-row"><span>Base price</span><span>${basePriceRaw}</span></div>
             {showDiscountOnCards && (
               <div className="total-row discount">
-                <span>New customer discount</span>
-                <span>- ${NEW_USER_DISCOUNT}</span>
+                <span>New customer discount</span><span>- ${NEW_USER_DISCOUNT}</span>
               </div>
             )}
-
             {pkg?.id === "D" && (
-              <div className="total-row">
-                <span>Cleaning focus</span>
-                <span>{value.detailChoice || "-"}</span>
-              </div>
+              <div className="total-row"><span>Cleaning focus</span><span>{value.detailChoice || "-"}</span></div>
             )}
-
             {addonLines.length > 0 && (
               <>
                 <div className="total-row" style={{ marginTop: 6, fontWeight: 600 }}>
-                  <span>Add-ons</span>
-                  <span></span>
+                  <span>Add-ons</span><span></span>
                 </div>
                 {addonLines.map((l) => (
                   <div className="total-row addon-line" key={l.key}>
-                    <span>
-                      {l.label}
-                      {l.qty > 1 ? ` × ${l.qty}` : ""}
-                    </span>
+                    <span>{l.label}{l.qty > 1 ? ` × ${l.qty}` : ""}</span>
                     <span>${l.lineTotal}</span>
                   </div>
                 ))}
               </>
             )}
-
-            <div className="total-row grand">
-              <span>Vehicle total</span>
-              <span>${vehicleTotal}</span>
-            </div>
+            <div className="total-row grand"><span>Vehicle total</span><span>${vehicleTotal}</span></div>
           </div>
         </div>
       )}
@@ -421,50 +292,36 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
   );
 }
 
-/* ===================== 多车总控（主组件） ===================== */
-export default function LuxuryPackages() {
+/* ---------- 多车总控 ---------- */
+export default function CarConfigurator() {
   const [vehicles, setVehicles] = useState(() => [
-    {
-      uid: crypto.randomUUID(),
-      name: "",
-      packageId: "A",
-      size: null,
-      detailChoice: null,
-      addons: {},
-    },
+    { uid: crypto.randomUUID(), name: "", packageId: "A", size: null, detailChoice: null, addons: {} },
   ]);
 
-  const [showBooking, setShowBooking] = useState(false);
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   const addVehicle = () => {
     setVehicles((v) => [
       ...v,
-      {
-        uid: crypto.randomUUID(),
-        name: "",
-        packageId: "A",
-        size: null,
-        detailChoice: null,
-        addons: {},
-      },
+      { uid: crypto.randomUUID(), name: "", packageId: "A", size: null, detailChoice: null, addons: {} },
     ]);
   };
   const removeVehicle = (uid) => setVehicles((v) => v.filter((x) => x.uid !== uid));
   const updateVehicle = (uid, next) => setVehicles((v) => v.map((x) => (x.uid === uid ? next : x)));
 
-  // 真折扣车：第一辆“已选尺寸”的车辆
+  // 折扣真正落在哪辆车：第一辆“已选尺寸”的车
   const discountUid = useMemo(() => {
     const firstReady = vehicles.find((v) => v.size);
     return firstReady?.uid || null;
   }, [vehicles]);
 
-  // 展示层：如果还没人选尺寸，就把折后价展示在第一辆卡片
+  // 展示层：没人选尺寸时，先把折后价展示在第一辆卡片
   const displayDiscountUid = useMemo(
     () => discountUid ?? vehicles[0]?.uid ?? null,
     [discountUid, vehicles]
   );
 
-  // 合计
+  // Grand Total（只有 discountUid 那辆真的减 20）
   const grandTotal = useMemo(() => {
     return vehicles.reduce((sum, v) => {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
@@ -482,7 +339,7 @@ export default function LuxuryPackages() {
     }, 0);
   }, [vehicles, discountUid]);
 
-  // 订单行（给 BookingModal 摘要用）
+  // 底部逐车明细
   const orderLines = useMemo(() => {
     return vehicles.map((v, idx) => {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
@@ -518,34 +375,16 @@ export default function LuxuryPackages() {
     });
   }, [vehicles, discountUid]);
 
-  const handleCheckout = () => {
-    if (grandTotal <= 0) return;
-    setShowBooking(true);
-  };
-
-  const handleBookingSubmit = (payload) => {
-    // 这里对接后端即可
-    console.log("BOOKING_PAYLOAD", payload);
-    setShowBooking(false);
-    alert(
-      `Thanks ${payload.name}! We received your booking for ${new Date(
-        payload.dateTimeISO
-      ).toLocaleString()}. Total: $${payload.grandTotal}`
-    );
-  };
-
   return (
     <section className="luxury-section" style={{ paddingTop: 32 }}>
       <div className="luxury-container">
-        {/* 标题 + 新人提示 */}
+        {/* 顶部标题 + 新人提示 */}
         <h2 className="section-title">Our Premium Packages</h2>
         <p className="section-subtitle">🎉 New customers enjoy $20 off their first vehicle</p>
 
-        {/* 顶部加车按钮 */}
+        {/* 顶部加车按钮（也在底部再放一个） */}
         <div className="top-actions">
-          <button className="open-addon-btn" onClick={addVehicle}>
-            + Add another vehicle
-          </button>
+          <button className="open-addon-btn" onClick={addVehicle}>+ Add another vehicle</button>
         </div>
 
         <div className="discount-banner" style={{ marginBottom: 20 }}>
@@ -560,9 +399,7 @@ export default function LuxuryPackages() {
                 {v.uid === discountUid ? "  •  New customer -$20" : ""}
               </div>
               {vehicles.length > 1 && (
-                <button className="btn-ghost" onClick={() => removeVehicle(v.uid)}>
-                  Remove
-                </button>
+                <button className="btn-ghost" onClick={() => removeVehicle(v.uid)}>Remove</button>
               )}
             </div>
 
@@ -574,11 +411,9 @@ export default function LuxuryPackages() {
           </div>
         ))}
 
-        {/* 底部操作栏 */}
+        {/* 底部操作 & 总计 + 明细弹层 */}
         <div className="action-row">
-          <button className="open-addon-btn" onClick={addVehicle}>
-            + Add another vehicle
-          </button>
+          <button className="open-addon-btn" onClick={addVehicle}>+ Add another vehicle</button>
 
           <div className="checkout-box">
             <div className="grand-total-label">Grand Total</div>
@@ -586,22 +421,81 @@ export default function LuxuryPackages() {
             <button
               className="primary-cta"
               disabled={grandTotal <= 0}
-              onClick={handleCheckout}
+              onClick={() => alert(`Estimated total: $${grandTotal}`)}
             >
               Checkout
             </button>
+
+            {/* Show breakdown */}
+            <div className="mini-summary-wrap">
+              <button
+                type="button"
+                className="mini-summary-trigger"
+                onClick={() => setShowBreakdown(v => !v)}
+                aria-expanded={showBreakdown}
+              >
+                {showBreakdown ? "Hide breakdown" : "Show breakdown"}
+              </button>
+
+              {showBreakdown && (
+                <div className="mini-popover" role="dialog" aria-label="Order breakdown">
+                  <div className="mini-summary-body">
+                    {orderLines.map((l) =>
+                      l.ready ? (
+                        <div key={l.key} className="mini-v">
+                          <div className="mini-v-head">
+                            <strong>{l.title}</strong>
+                            <strong>${l.subtotal}</strong>
+                          </div>
+
+                          <div className="mini-row">
+                            <span>{l.pkgName} — {l.size}</span>
+                            <span>${l.base}</span>
+                          </div>
+
+                          {l.discount > 0 && (
+                            <div className="mini-row mini-discount">
+                              <span>New customer discount</span>
+                              <span>- ${l.discount}</span>
+                            </div>
+                          )}
+
+                          {l.dChoice && (
+                            <div className="mini-row">
+                              <span>Cleaning focus</span>
+                              <span>{l.dChoice}</span>
+                            </div>
+                          )}
+
+                          {l.addons.length > 0 && (
+                            <>
+                              <div className="mini-row mini-title"><span>Add-ons</span><span></span></div>
+                              {l.addons.map((a, i) => (
+                                <div className="mini-row mini-addon" key={i}>
+                                  <span>{a.label}{a.qty > 1 ? ` × ${a.qty}` : ""}</span>
+                                  <span>${a.total}</span>
+                                </div>
+                              ))}
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        <div key={l.key} className="mini-v muted">{l.title}: (no selection)</div>
+                      )
+                    )}
+
+                    <div className="mini-grand">
+                      <span>Grand Total</span>
+                      <span>${grandTotal}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* /Show breakdown */}
           </div>
         </div>
       </div>
-
-      {/* 预约弹窗 */}
-      <BookingModal
-        open={showBooking}
-        onClose={() => setShowBooking(false)}
-        onSubmit={handleBookingSubmit}
-        grandTotal={grandTotal}
-        orderLines={orderLines}
-      />
     </section>
   );
 }

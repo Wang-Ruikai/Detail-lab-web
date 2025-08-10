@@ -1,185 +1,139 @@
-/* Background 满宽度，内容居中 */
-.luxury-section {
-  background-color: #f9fafb;
-  padding: 80px 0;
-  width: 100vw;
-  margin-left: calc(50% - 50vw); /* ✅ 拉出左右限制 */
+/* ===== Base layout ===== */
+.luxury-section{background:#f9fafb;padding:80px 0;width:100vw;margin-left:calc(50% - 50vw);overflow:visible}
+.luxury-container{max-width:1000px;margin:0 auto}
+.section-title{text-align:center;font-size:32px;color:#1e3a8a;font-weight:700;margin-bottom:6px}
+.section-subtitle{text-align:center;font-size:16px;color:#1e3a8a;margin:-4px 0 28px;font-weight:500}
+
+/* ===== Top actions ===== */
+.top-actions{display:flex;justify-content:flex-end;gap:10px;margin:6px 0 14px}
+
+/* ===== Package selector ===== */
+.slider{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.package-card{flex:0 0 calc(50% - 6px);max-width:calc(50% - 6px);background:#fff;color:#1e3a8a;transition:all .2s;border-radius:12px;padding:14px 12px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.05);border:2px solid transparent;min-height:100px;font-size:14px}
+.package-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.package-card.active{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
+.package-name{font-weight:700}
+.package-desc{margin-top:6px;font-size:13px;color:inherit}
+
+/* ===== Vehicle card ===== */
+.vehicle-block{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.05);padding:16px;margin:16px 0}
+.vehicle-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.package-details{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.05);padding:24px}
+.columns{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between}
+.detail-block{flex:1 1 45%}
+.detail-block h4{font-size:16px;font-weight:700;color:#1e3a8a;margin-bottom:12px}
+.detail-block ul{list-style:disc;padding-left:20px;font-size:14px;color:#374151}
+
+/* ===== Size / price row ===== */
+.price-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:32px;text-align:left}
+.price-tag{display:flex;align-items:center;gap:10px;background:#1e3a8a;color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;flex:0 0 23%;transition:background .2s,color .2s,box-shadow .2s,transform .08s;cursor:pointer;border:2px solid transparent}
+.price-tag:hover{background:#fff;color:#1e3a8a;border:2px solid #1e3a8a;box-shadow:0 6px 16px rgba(15,23,42,.15)}
+.price-tag.active-size{background:#fff;color:#1e3a8a;border:2px solid #1e3a8a}
+.vehicle-icon{width:64px;height:auto;filter:brightness(0) invert(1);transition:filter .2s}
+.price-tag:hover .vehicle-icon,.price-tag.active-size .vehicle-icon{filter:brightness(0) invert(0)}
+.price-info{display:flex;flex-direction:column;line-height:1.2}
+.size-label{font-size:12px;opacity:.85}
+.price-line{display:flex;gap:8px;align-items:baseline}
+.old-price{text-decoration:line-through;color:#6b7280;font-size:13px}
+.new-price{font-weight:800;font-size:18px;color:#fff}
+.price-tag.active-size .new-price,.price-tag:hover .new-price{color:#1e3a8a}
+
+/* ===== Add-ons ===== */
+.addon-section{margin-top:32px;padding:20px;border-top:2px solid #e5e7eb}
+.addon-title{font-size:18px;font-weight:600;color:#1e3a8a;margin-bottom:16px}
+.addon-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:680px){.addon-grid{grid-template-columns:1fr}}
+.addon-item{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #e5e7eb;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .2s}
+.addon-item:hover{border-color:#94a3b8}
+.addon-item.selected{background:#e0ebff;border-color:#1e3a8a;box-shadow:0 4px 12px rgba(30,58,138,.12)}
+.addon-item input[type="checkbox"]{accent-color:#1e3a8a;width:16px;height:16px}
+.addon-item label{flex:1;font-size:14px;color:#1e3a8a;font-weight:500}
+.quantity-controls{display:flex;align-items:center;gap:6px}
+.quantity-controls button{background:#1e3a8a;color:#fff;border:none;padding:4px 8px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;width:28px;height:28px;display:flex;justify-content:center;align-items:center}
+.quantity-controls button:hover{filter:brightness(1.08)}
+.quantity-controls span{font-weight:600;min-width:24px;text-align:center;color:#1e3a8a;font-size:15px}
+
+/* ===== Totals ===== */
+.total-price-display{margin-top:20px;color:#1e3a8a;text-align:right}
+.total-row{display:flex;justify-content:space-between;margin:4px 0;font-size:14px}
+.total-row.discount{color:#0a7a1f;font-weight:600}
+.total-row.grand{margin-top:6px;font-size:18px;font-weight:800}
+
+/* ===== D choice (radio row) ===== */
+.choice-row{display:flex;align-items:center;gap:10px;margin-top:6px}
+.choice-row input{margin-right:4px}
+
+/* ===== Banner & buttons ===== */
+.discount-banner{background:#ecf3ff;color:#1e3a8a;border:1px solid #cfe0ff;padding:8px 12px;border-radius:8px;margin-bottom:16px;font-weight:600}
+.btn-ghost{height:36px;padding:0 12px;border-radius:8px;border:1.5px solid #e5e7eb;background:#fff;color:#1f2937;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.btn-ghost:hover{border-color:#1e3a8a;color:#1e3a8a;background:#f8fafc}
+.open-addon-btn{border:1px solid #1e3a8a;color:#1e3a8a;background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600;transition:background .15s,color .15s,border-color .15s}
+.open-addon-btn:hover{background:#1e3a8a;color:#fff}
+
+/* ===== Bottom bar ===== */
+.action-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.checkout-box{margin-left:auto;display:flex;align-items:center;gap:12px}
+.grand-total-label{font-weight:600;color:#374151}
+.grand-total-amount{font-weight:800;color:#1e3a8a}
+.primary-cta{background:#0a7a1f;color:#fff;border:none;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:700;transition:filter .15s,transform .08s}
+.primary-cta:hover:not(:disabled){filter:brightness(1.06)}
+.primary-cta:active:not(:disabled){transform:translateY(1px)}
+.primary-cta:disabled{background:#94a3b8;cursor:not-allowed}
+
+/* ===== Booking modal (BookingForm.jsx) ===== */
+.bk-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(17,24,39,.55);
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
 }
-
-.luxury-container {
-  max-width: 1000px;
-  margin: 0 auto;
+.bk-modal{
+  width:min(680px,92vw);max-height:86vh;overflow:auto;
+  background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.25);
+  padding:16px;
 }
+.bk-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.bk-close{display:none} /* 现在不需要 X 按钮 */
+.bk-summary{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px;margin:10px 0 14px}
+.bk-summary-title{font-weight:700;color:#1e3a8a;margin-bottom:6px}
+.bk-line{border-bottom:1px solid #eef2f7;padding:6px 0}
+.bk-line:last-child{border-bottom:none}
+.bk-line-top{display:flex;justify-content:space-between;color:#1e3a8a;font-weight:700}
+.bk-line-sub{display:flex;justify-content:space-between;font-size:14px;color:#374151}
+.bk-discount{color:#0a7a1f;font-weight:600}
+.bk-grand{display:flex;justify-content:space-between;font-weight:800;color:#1e3a8a;margin-top:6px}
+.bk-form{padding:4px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.bk-label{display:flex;flex-direction:column;gap:6px;font-weight:600;color:#1f2937}
+.bk-input{border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;font-size:14px}
+.bk-input:focus{outline:none;border-color:#1e3a8a;box-shadow:0 0 0 3px rgba(30,58,138,.12)}
+.bk-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+.bk-btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+.bk-btn.ghost{background:#fff;border:1px solid #1e3a8a;color:#1e3a8a}
+.bk-btn.primary{background:#0a7a1f;color:#fff}
+.bk-btn.primary:disabled{background:#94a3b8;cursor:not-allowed}
 
-.section-title {
-  text-align: center;
-  font-size: 32px;
-  color: #1e3a8a;
-  font-weight: 700;
-  margin-bottom: 40px;
+/* DatePicker popper 置顶 + Done 区域 */
+.react-datepicker-popper{z-index:1100!important}
+.bk-dp-footer{padding:6px;text-align:right;background:#f9fafb;border-top:1px solid #eef2f7}
+.bk-dp-done{padding:4px 10px;font-size:13px;border:none;border-radius:6px;background:#10b981;color:#fff;cursor:pointer}
+.bk-dp-done:hover{background:#059669}
+
+/* ===== Mobile ===== */
+@media (max-width:768px){
+  .package-card{flex:0 0 48%;max-width:48%;min-height:92px;padding:12px;font-size:14px;box-sizing:border-box}
+  .slider{padding:0 12px}
+  .price-row{flex-direction:column}
+  .price-tag{flex:1 1 100%;width:100%}
+  .vehicle-icon{width:38px}
 }
-
-/* Button Group */
-.slider {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 12px;
-  margin-bottom: 24px;
+@media (max-width:720px){
+  .bk-form{grid-template-columns:1fr}
+  .bk-overlay{align-items:flex-end;padding:0}
+  .bk-modal{border-radius:16px 16px 0 0}
 }
-
-.package-card {
-  flex: 0 0 calc(50% - 6px);
-  max-width: calc(50% - 6px);
-  background-color: white;
-  color: #1e3a8a;
-  transition: all 0.3s ease;
-  border-radius: 12px;
-  padding: 14px 12px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 2px solid transparent;
-  min-height: 100px;
-  font-size: 14px;
-}
-
-.package-card.active {
-  background-color: #1e3a8a;
-  color: white;
-  border-color: #1e3a8a;
-}
-
-.package-desc {
-  margin-top: 6px;
-  font-size: 13px;
-  color: #555;
-}
-
-/* Detail Section */
-.package-details {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  padding: 24px;
-}
-
-.columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: space-between;
-}
-
-.detail-block {
-  flex: 1 1 45%;
-}
-
-.detail-block h4 {
-  font-size: 16px;
-  font-weight: bold;
-  color: #1e3a8a;
-  margin-bottom: 12px;
-}
-
-.detail-block ul {
-  list-style: disc;
-  padding-left: 20px;
-  font-size: 14px;
-  color: #374151;
-}
-
-/* Price Cards */
-.price-row {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 32px;
-  text-align: left;
-}
-
-.price-tag {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #1e3a8a;
-  color: white;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  flex: 0 0 23%;
-  transition: background 0.3s ease, color 0.3s ease;
-  cursor: pointer;
-}
-
-.vehicle-icon {
-  width: 64px;
-  height: auto;
-  filter: brightness(0) invert(1);
-  transition: filter 0.3s ease;
-}
-
-.price-tag:hover {
-  background: white;
-  color: #1e3a8a;
-}
-
-.price-tag:hover .vehicle-icon {
-  filter: brightness(0) invert(0);
-}
-
-.price-info {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.size-label {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.price-value {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .package-card {
-    flex: 0 0 48%;
-    max-width: 48%;
-    min-height: 80px;
-    padding: 12px;
-    font-size: 14px;
-    box-sizing: border-box;
-  }
-  .slider {
-    padding: 0 12px; /* ✅ 保证左右有留白 */
-  }
-
-  .package-desc {
-    display: none;
-  }
-
-  .price-row {
-    flex-direction: column;
-  }
-
-  .price-tag {
-    flex: 1 1 100%;
-    width: 100%;
-  }
-
-  .vehicle-icon {
-    width: 38px;
-  }
-}
-.package-desc {
-  color: inherit;
-}
-.package-desc {
-  transition: color 0.3s ease, opacity 0.3s ease;
+.bk-error { color:#b91c1c; font-size:12px; margin-top:4px; }
+/* 隐藏时间面板里所有禁用的时间项（灰色的行） */
+.react-datepicker__time-list-item--disabled,
+.react-datepicker__time-list-item--disabled:hover {
+  display: none;
 }

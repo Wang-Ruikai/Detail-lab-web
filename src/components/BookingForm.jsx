@@ -31,7 +31,9 @@ function Toast({ toast, onClose }) {
         padding: "12px 14px",
         maxWidth: 360,
         fontWeight: 600,
+        cursor: "pointer",
       }}
+      title="Click to dismiss"
     >
       {toast.message}
     </div>
@@ -40,6 +42,17 @@ function Toast({ toast, onClose }) {
 
 // ---------- 提交成功弹窗（不改原主弹窗结构） ----------
 function ResultModal({ data, onClose }) {
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    if (data && modalRef.current) {
+      // 居中时顺带平滑滚动到中间
+      try {
+        modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      } catch {}
+    }
+  }, [data]);
+
   if (!data) return null;
   return (
     <div
@@ -55,6 +68,8 @@ function ResultModal({ data, onClose }) {
       }}
     >
       <div
+        ref={modalRef}
+        id="result-modal"
         style={{
           width: "min(520px, 92vw)",
           background: "#fff",
@@ -164,10 +179,11 @@ export default function BookingModal({
   // Toast / 结果弹窗
   const [toast, setToast] = useState(null);
   const [resultModal, setResultModal] = useState(null);
+  const toastTimer = useRef(null);
   const showToast = (message, type = "ok", ms = 2400) => {
     setToast({ message, type });
-    window.clearTimeout(showToast._t);
-    showToast._t = window.setTimeout(() => setToast(null), ms);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), ms);
   };
 
   // 倒计时
@@ -176,6 +192,19 @@ export default function BookingModal({
     const t = setInterval(() => setResendIn((s) => s - 1), 1000);
     return () => clearInterval(t);
   }, [resendIn]);
+
+  // 弹窗定位（保持你原来的滚动定位）
+  const modalRef = useRef(null);
+  useEffect(() => {
+    if (open && modalRef.current) {
+      const t = setTimeout(() => {
+        try {
+          modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        } catch {}
+      }, 30);
+      return () => clearTimeout(t);
+    }
+  }, [open]);
 
   // 校验
   const phoneOk = useMemo(() => /^\+?[0-9()\-\s]{6,}$/.test(phone.trim()), [phone]);
@@ -364,6 +393,7 @@ export default function BookingModal({
         order_table,
       });
 
+      // 显示结果弹窗；顺带把页面滚到顶部，确保用户能看见
       setResultModal({
         name,
         email,
@@ -373,26 +403,39 @@ export default function BookingModal({
         order_id,
         grand_total: grandTotal,
       });
+      try {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch {}
     } catch (err) {
       console.error("EmailJS send failed:", err?.status, err?.text || err?.message, err);
       showToast("Failed to send emails. Please try again.", "error");
     }
   };
 
+  // 当显示结果弹窗时，隐藏背后的预约弹窗（不改变原样式类）
+  const bookingVisibility = resultModal ? "hidden" : "visible";
+
   return (
     <>
       <Toast toast={toast} onClose={() => setToast(null)} />
       <ResultModal
-        data={resultModal}
-        onClose={() => {
-          setResultModal(null);
-          onClose?.();
-        }}
-      />
+            data={resultModal}
+            onClose={() => {
+                setResultModal(null);
+                onClose?.();
+                window.location.reload(); // 关闭时刷新页面
+            }}
+        />
 
-      {/* ✅ 下面保持你原有的布局/样式结构，不动 class */}
-      <div className="bk-overlay" role="dialog" aria-modal="true" aria-label="Booking form">
-        <div className="bk-modal">
+      {/* 预约弹窗（保持原布局 class），仅在结果弹窗出现时可见性隐藏 */}
+      <div
+        className="bk-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Booking form"
+        style={{ visibility: bookingVisibility }}
+      >
+        <div className="bk-modal" ref={modalRef}>
           {/* 头部 */}
           <div className="bk-head">
             <h3>Booking Information</h3>
@@ -543,7 +586,15 @@ export default function BookingModal({
               Preferred date &amp; time
               <DatePicker
                 selected={dateTime}
-                onChange={(d) => d && setDateTime(d)}
+                onChange={(d) => {
+                  if (!d) return;
+                  const next = new Date(d);
+                  // 如果用户第一次只点了日期（时间=00:00），或之前没选过时间，则默认 09:00
+                  if (!dateTime || (d.getHours() === 0 && d.getMinutes() === 0)) {
+                    next.setHours(9, 0, 0, 0);
+                  }
+                  setDateTime(next);
+                }}
                 showTimeSelect
                 timeFormat="HH:mm"
                 timeIntervals={15}

@@ -18,7 +18,7 @@ html, body {
 }
 
 .homepage {
-  padding-top: 112px;
+  padding-top: 112px; /* 默认PC顶部留白 */
   padding-left: 24px;
   padding-right: 24px;
 }
@@ -66,6 +66,7 @@ html, body {
   width: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .site-logo:hover {
@@ -182,46 +183,10 @@ html, body {
   transform: translateY(-100%);
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 768px) {
-  .site-logo {
-    height: 64px;
-  }
-
-  .site-title {
-    font-size: 18px;
-  }
-
-  .hero-banner {
-    height: 60vh;
-  }
-
-  .hero-title {
-    font-size: 28px;
-  }
-
-  .hero-subtitle {
-    font-size: 16px;
-  }
-
-  .hero-button {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
-}
-.site-logo {
-  height: 100px;
-  width: auto;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
-
-/* Bounce 动画类 */
 .bounce-once {
   animation: logoBounce 2s ease forwards;
 }
 
-/* 动画定义 */
 @keyframes logoBounce {
   0%   { transform: scale(1); }
   20%  { transform: scale(1.25); }
@@ -231,20 +196,69 @@ html, body {
   100% { transform: scale(1); }
 }
 
-/* ---- mobile fix for Contact section ---- */
+/* ---- Contact section mobile fix ---- */
 @media (max-width: 768px) {
   .contact-section,
   .contact-section p,
   .contact-section .section-title,
   .contact-section strong {
-    color: #0f172a !important; /* 深色文字 */
+    color: #0f172a !important;
   }
   .contact-section a {
     color: #1d4ed8 !important;
     text-decoration: none;
   }
-  /* 如果仍然看不清，可给联系区加浅底色 */
   .contact-section {
-    background-color: #ffffff; /* 或者 rgba(255,255,255,.9) */
+    background-color: #ffffff;
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .site-logo {
+    height: 64px;
+  }
+  .site-title {
+    font-size: 18px;
+  }
+  .hero-banner {
+    height: 60vh;
+  }
+  .hero-title {
+    font-size: 28px;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+  }
+  .hero-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* ---------- Mobile (<640px) ---------- */
+@media (max-width: 640px) {
+  .brand-name {
+    display: none !important; /* 隐藏品牌文字 */
+  }
+  .site-header {
+    padding: 8px 12px;
+  }
+  .site-header-left {
+    gap: 8px;
+  }
+  .site-logo {
+    height: 36px;
+    width: auto;
+  }
+  .site-nav a {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  .homepage {
+    padding-top: 72px; /* 减少顶部空白 */
+  }
+  .hero-banner {
+    margin-top: 0 !important;
   }
 }

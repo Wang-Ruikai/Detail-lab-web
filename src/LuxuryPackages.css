@@ -7,13 +7,47 @@
 /* ===== Top actions ===== */
 .top-actions{display:flex;justify-content:flex-end;gap:10px;margin:6px 0 14px}
 
-/* ===== Package selector ===== */
-.slider{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
-.package-card{flex:0 0 calc(50% - 6px);max-width:calc(50% - 6px);background:#fff;color:#1e3a8a;transition:all .2s;border-radius:12px;padding:14px 12px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.05);border:2px solid transparent;min-height:100px;font-size:14px}
+/* ===== Package selector (固定 2×2) ===== */
+.slider{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.package-card{
+  background:#fff;
+  color:#1e3a8a;
+  transition:all .2s;
+  border-radius:12px;
+  padding:14px 12px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  border:2px solid transparent;
+  min-height:110px;
+  font-size:14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
 .package-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.08)}
 .package-card.active{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
-.package-name{font-weight:700}
-.package-desc{margin-top:6px;font-size:13px;color:inherit}
+.package-name{font-weight:700;font-size:18px;line-height:1.15}
+.package-desc{margin-top:6px;font-size:13px;color:inherit;line-height:1.35}
+
+/* 小屏依然 2×2，隐藏描述以节省空间 */
+@media (max-width:480px){
+  .slider{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .package-card{padding:12px 10px;min-height:92px}
+  .package-name{font-size:16px}
+  .package-desc{display:none}
+}
+/* 极小屏也保持两列，可再收紧高度 */
+@media (max-width:360px){
+  .slider{gap:8px}
+  .package-card{min-height:86px;padding:10px}
+}
 
 /* ===== Vehicle card ===== */
 .vehicle-block{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.05);padding:16px;margin:16px 0}
@@ -93,7 +127,7 @@
   padding:16px;
 }
 .bk-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.bk-close{display:none} /* 现在不需要 X 按钮 */
+.bk-close{display:none}
 .bk-summary{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:10px;margin:10px 0 14px}
 .bk-summary-title{font-weight:700;color:#1e3a8a;margin-bottom:6px}
 .bk-line{border-bottom:1px solid #eef2f7;padding:6px 0}
@@ -120,8 +154,6 @@
 
 /* ===== Mobile ===== */
 @media (max-width:768px){
-  .package-card{flex:0 0 48%;max-width:48%;min-height:92px;padding:12px;font-size:14px;box-sizing:border-box}
-  .slider{padding:0 12px}
   .price-row{flex-direction:column}
   .price-tag{flex:1 1 100%;width:100%}
   .vehicle-icon{width:38px}
@@ -132,8 +164,30 @@
   .bk-modal{border-radius:16px 16px 0 0}
 }
 .bk-error { color:#b91c1c; font-size:12px; margin-top:4px; }
-/* 隐藏时间面板里所有禁用的时间项（灰色的行） */
+/* 隐藏时间面板里禁用时间 */
 .react-datepicker__time-list-item--disabled,
-.react-datepicker__time-list-item--disabled:hover {
-  display: none;
+.react-datepicker__time-list-item--disabled:hover{display:none}
+
+/* ===== Mobile tweaks for services/price/addons ===== */
+@media (max-width:420px){
+  .columns{display:block}
+  .detail-block{margin-bottom:12px}
+  .price-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .price-tag{padding:10px;border-radius:12px}
+  .vehicle-icon{width:28px;height:28px}
+  .size-label{font-size:13px}
+  .price-line .new-price{font-size:16px}
+  .price-line .old-price{font-size:12px}
+  .choice-row label{padding:10px 12px!important;border-radius:10px!important;font-size:14px}
+  .addon-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .addon-item{padding:10px;border-radius:10px;font-size:13px}
+  .quantity-controls button{width:24px;height:24px;line-height:24px}
+  .total-price-display{border-radius:12px;padding:12px}
+  .total-row{font-size:14px}
+  .total-row.grand span:last-child{font-size:16px}
+}
+/* 超小屏：价格 / 加项 变单列（套餐仍保持 2×2） */
+@media (max-width:360px){
+  .price-row{grid-template-columns:1fr}
+  .addon-grid{grid-template-columns:1fr}
 }

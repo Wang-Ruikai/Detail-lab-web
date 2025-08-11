@@ -78,6 +78,7 @@ const PACKAGES = [
       "Interior Glass & Piano Panel Clean",
       "Mat Shampoo Extraction",
       "Leather Deep Clean (Horsehair Brush + Agent)",
+      "Fabric Seat Shampoo (all seats)",
     ],
     upholstery: [
       "All Seating Areas",

@@ -78,7 +78,7 @@ const PACKAGES = [
       "Interior Glass & Piano Panel Clean",
       "Mat Shampoo Extraction",
       "Leather Deep Clean (Horsehair Brush + Agent)",
-      "Fabric Seat Shampoo (all seats)",
+      
     ],
     // Upholstery Shampoo 的详细范围
     upholstery: [

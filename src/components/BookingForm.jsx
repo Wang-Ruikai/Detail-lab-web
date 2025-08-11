@@ -46,7 +46,7 @@ function ResultModal({ data, onClose }) {
 
   useEffect(() => {
     if (data && modalRef.current) {
-      // 居中时顺带平滑滚动到中间
+      // 居中显示
       try {
         modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       } catch {}
@@ -171,6 +171,7 @@ export default function BookingModal({
   const [sendingCode, setSendingCode] = useState(false);
   const [resendIn, setResendIn] = useState(0);
   const [generatedCode, setGeneratedCode] = useState("");
+  the
   const [codeInput, setCodeInput] = useState("");
   const [verified, setVerified] = useState(false);
   const [emailForCode, setEmailForCode] = useState("");
@@ -393,7 +394,7 @@ export default function BookingModal({
         order_table,
       });
 
-      // 显示结果弹窗；顺带把页面滚到顶部，确保用户能看见
+      // 显示结果弹窗；顺带把页面滚到顶部
       setResultModal({
         name,
         email,
@@ -403,6 +404,12 @@ export default function BookingModal({
         order_id,
         grand_total: grandTotal,
       });
+
+      // 🔴 新增：修改地址栏为“确认页”URL（不跳转）
+      try {
+        window.history.pushState({}, "", "/booking-confirmed");
+      } catch {}
+
       try {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch {}
@@ -418,14 +425,19 @@ export default function BookingModal({
   return (
     <>
       <Toast toast={toast} onClose={() => setToast(null)} />
+
       <ResultModal
-            data={resultModal}
-            onClose={() => {
-                setResultModal(null);
-                onClose?.();
-                window.location.reload(); // 关闭时刷新页面
-            }}
-        />
+        data={resultModal}
+        onClose={() => {
+          setResultModal(null);
+          onClose?.();
+          // 🔴 新增：关闭时把 URL 改回首页，再刷新
+          try {
+            window.history.pushState({}, "", "/");
+          } catch {}
+          window.location.reload();
+        }}
+      />
 
       {/* 预约弹窗（保持原布局 class），仅在结果弹窗出现时可见性隐藏 */}
       <div
@@ -455,7 +467,7 @@ export default function BookingModal({
                     <span className="bk-line-title">{l.title}</span>
                     <span className="bk-line-amount">${l.subtotal}</span>
                   </div>
-                  <div className="bk-line-sub">
+                    <div className="bk-line-sub">
                     <span>
                       {l.pkgName} — {l.size}
                     </span>

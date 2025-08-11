@@ -80,6 +80,7 @@ const PACKAGES = [
       "Leather Deep Clean (Horsehair Brush + Agent)",
       "Fabric Seat Shampoo (all seats)",
     ],
+    // Upholstery Shampoo 的详细范围
     upholstery: [
       "All Seating Areas",
       "Floor Surfaces",
@@ -190,22 +191,19 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
     });
   };
 
-  // ✅ 只有非 D 套餐，或 D 套餐已选择 Interior/Exterior 才显示“Add-ons + 明细”
+  // 只有非 D 套餐，或 D 套餐已选择 Interior/Exterior 才显示“Add-ons + 明细”
   const canShowExtras = pkg && value.size && (pkg.id !== "D" || !!value.detailChoice);
 
-  // 👉 “座椅清洗在非 C 套餐被选中时”的推荐提示
-  const fabricSelectedOnNonC =
-    pkg?.id !== "C" && Boolean(value.addons?.fabric?.selected);
+  // 非 C 套餐且勾选了座椅清洗时，提示推荐 C
+  const fabricSelectedOnNonC = pkg?.id !== "C" && Boolean(value.addons?.fabric?.selected);
 
-  // 切换到 C 套餐（保留已选尺寸，清空附加项与 D 的内/外选择）
   const switchToC = () =>
     onChange({
       ...value,
       packageId: "C",
-      // 保留 size 更符合用户预期
       size: value.size || null,
       detailChoice: null,
-      addons: {}, // C 已包含全车织物清洗，清空附加项避免重复
+      addons: {},
     });
 
   // “卡片式”内/外选择样式
@@ -230,7 +228,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
 
   return (
     <div className="package-details" style={{ marginTop: 16 }}>
-      {/* 套餐切换（含介绍，移动端也显示） */}
+      {/* 套餐切换（含介绍） */}
       <div className="slider" style={{ marginTop: 8 }}>
         {PACKAGES.map((p) => (
           <div
@@ -246,6 +244,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
 
       {/* 服务清单 */}
       <div className="columns">
+        {/* Exterior */}
         <div className="detail-block">
           <h4>Exterior Care</h4>
           <ul>
@@ -257,6 +256,8 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
             ))}
           </ul>
         </div>
+
+        {/* Interior + Upholstery (only for C) */}
         <div className="detail-block">
           <h4>Interior Care</h4>
           <ul>
@@ -267,6 +268,17 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
               <li key={`int-${i}`}>{item}</li>
             ))}
           </ul>
+
+          {pkg?.id === "C" && Array.isArray(pkg.upholstery) && pkg.upholstery.length > 0 && (
+            <>
+              <h4 style={{ marginTop: 10 }}>Upholstery Shampoo</h4>
+              <ul>
+                {pkg.upholstery.map((item, i) => (
+                  <li key={`uph-${i}`}>{item}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </div>
 
@@ -359,19 +371,19 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
         </div>
       )}
 
-      {/* Add-ons（两列布局）+ 小计 */}
+      {/* Add-ons（两列）+ 小计 */}
       {canShowExtras && (
         <div className="addon-section">
           <div className="addon-title">Add-ons</div>
 
-          {/* 👉 推荐 C 的提示条 */}
+          {/* 推荐切到 C */}
           {fabricSelectedOnNonC && (
             <div
               style={{
                 marginBottom: 12,
                 padding: "10px 12px",
                 borderRadius: 10,
-                background: "#fff7ed",         // 温和橙
+                background: "#fff7ed",
                 border: "1px solid #fed7aa",
                 color: "#92400e",
                 display: "flex",
@@ -380,7 +392,11 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
                 flexWrap: "wrap",
               }}
             >
-              <span>For a full upholstery shampoo, we recommend <strong>Package C – Complete Shampoo Detailing</strong>.</span>
+              <span>
+                For a full upholstery shampoo, we recommend
+                {" "}
+                <strong>Package C – Complete Shampoo Detailing</strong>.
+              </span>
               <button
                 type="button"
                 onClick={switchToC}
@@ -401,7 +417,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
 
           <div className="addon-grid">
             {ADDONS.map((a) => {
-              if (a.key === "fabric" && pkg.id === "C") return null; // C 不显示座椅清洗
+              if (a.key === "fabric" && pkg.id === "C") return null; // C 已包含织物清洗
               const selected = value.addons?.[a.key]?.selected;
               const qty = value.addons?.[a.key]?.qty || 1;
               return (
@@ -543,7 +559,7 @@ export default function LuxuryPackages() {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
       if (!pkg || !v.size) {
         return { key: v.uid, title: `Vehicle ${idx + 1}`, ready: false };
-      }
+        }
       const base = pkg.price[v.size];
       const isDiscounted = v.uid === discountUid;
       const discount = isDiscounted ? Math.min(NEW_USER_DISCOUNT, base) : 0;
@@ -580,7 +596,6 @@ export default function LuxuryPackages() {
 
   const handleBookingSubmit = (payload) => {
     console.log("BOOKING_PAYLOAD", payload);
-    // 这里不再用 alert，交给 BookingForm 的 toast
   };
 
   return (

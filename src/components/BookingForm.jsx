@@ -46,7 +46,6 @@ function ResultModal({ data, onClose }) {
 
   useEffect(() => {
     if (data && modalRef.current) {
-      // 居中显示
       try {
         modalRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       } catch {}
@@ -171,7 +170,6 @@ export default function BookingModal({
   const [sendingCode, setSendingCode] = useState(false);
   const [resendIn, setResendIn] = useState(0);
   const [generatedCode, setGeneratedCode] = useState("");
-  the
   const [codeInput, setCodeInput] = useState("");
   const [verified, setVerified] = useState(false);
   const [emailForCode, setEmailForCode] = useState("");
@@ -394,7 +392,7 @@ export default function BookingModal({
         order_table,
       });
 
-      // 显示结果弹窗；顺带把页面滚到顶部
+      // 显示结果弹窗
       setResultModal({
         name,
         email,
@@ -405,7 +403,7 @@ export default function BookingModal({
         grand_total: grandTotal,
       });
 
-      // 🔴 新增：修改地址栏为“确认页”URL（不跳转）
+      // 修改地址栏为“确认页”URL（不跳转）
       try {
         window.history.pushState({}, "", "/booking-confirmed");
       } catch {}
@@ -431,7 +429,7 @@ export default function BookingModal({
         onClose={() => {
           setResultModal(null);
           onClose?.();
-          // 🔴 新增：关闭时把 URL 改回首页，再刷新
+          // 关闭时把 URL 改回首页，再刷新
           try {
             window.history.pushState({}, "", "/");
           } catch {}
@@ -467,7 +465,7 @@ export default function BookingModal({
                     <span className="bk-line-title">{l.title}</span>
                     <span className="bk-line-amount">${l.subtotal}</span>
                   </div>
-                    <div className="bk-line-sub">
+                  <div className="bk-line-sub">
                     <span>
                       {l.pkgName} — {l.size}
                     </span>
@@ -601,7 +599,6 @@ export default function BookingModal({
                 onChange={(d) => {
                   if (!d) return;
                   const next = new Date(d);
-                  // 如果用户第一次只点了日期（时间=00:00），或之前没选过时间，则默认 09:00
                   if (!dateTime || (d.getHours() === 0 && d.getMinutes() === 0)) {
                     next.setHours(9, 0, 0, 0);
                   }

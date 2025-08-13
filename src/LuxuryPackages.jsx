@@ -78,9 +78,7 @@ const PACKAGES = [
       "Interior Glass & Piano Panel Clean",
       "Mat Shampoo Extraction",
       "Leather Deep Clean (Horsehair Brush + Agent)",
-      
     ],
-    // Upholstery Shampoo 的详细范围
     upholstery: [
       "All Seating Areas",
       "Floor Surfaces",
@@ -125,6 +123,9 @@ const ADDONS = [
   { key: "vomit", name: "Vomit Cleanup", price: 0 },
 ];
 
+// 🚫 D 套餐不参与新人折扣
+const isDiscountEligible = (v) => v.size && v.packageId !== "D";
+
 /* ===================== 单车卡片 ===================== */
 function VehicleCard({ value, onChange, showDiscountOnCards }) {
   const pkg = PACKAGES.find((p) => p.id === value.packageId);
@@ -132,7 +133,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
   const basePriceRaw = pkg && value.size ? pkg.price[value.size] : 0;
   const discountedBase = Math.max(
     0,
-    basePriceRaw - (showDiscountOnCards ? NEW_USER_DISCOUNT : 0)
+    basePriceRaw - (showDiscountOnCards && pkg?.id !== "D" ? NEW_USER_DISCOUNT : 0)
   );
 
   const addonEntries = Object.entries(value.addons || {});
@@ -288,7 +289,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
           {Object.entries(pkg.price).map(([size, price], idx) => {
             const discounted = Math.max(
               0,
-              price - (showDiscountOnCards ? NEW_USER_DISCOUNT : 0)
+              price - (showDiscountOnCards && pkg.id !== "D" ? NEW_USER_DISCOUNT : 0)
             );
             return (
               <div
@@ -306,7 +307,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
                     {size} {SIZE_DETAILS[size]}
                   </span>
                   <div className="price-line">
-                    {showDiscountOnCards ? (
+                    {showDiscountOnCards && pkg.id !== "D" ? (
                       <>
                         <span className="old-price">${price}</span>
                         <span className="new-price">${discounted}</span>
@@ -393,8 +394,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
               }}
             >
               <span>
-                For a full upholstery shampoo, we recommend
-                {" "}
+                For a full upholstery shampoo, we recommend{" "}
                 <strong>Package C – Complete Shampoo Detailing</strong>.
               </span>
               <button
@@ -449,7 +449,7 @@ function VehicleCard({ value, onChange, showDiscountOnCards }) {
               <span>${basePriceRaw}</span>
             </div>
 
-            {showDiscountOnCards && (
+            {showDiscountOnCards && pkg?.id !== "D" && (
               <div className="total-row discount">
                 <span>New customer discount</span>
                 <span>- ${NEW_USER_DISCOUNT}</span>
@@ -523,17 +523,18 @@ export default function LuxuryPackages() {
   const removeVehicle = (uid) => setVehicles((v) => v.filter((x) => x.uid !== uid));
   const updateVehicle = (uid, next) => setVehicles((v) => v.map((x) => (x.uid === uid ? next : x)));
 
-  // 真折扣车：第一辆“已选尺寸”的车辆
+  // ✅ 只对 A/B/C 的第一辆（已选尺寸）应用新人折扣
   const discountUid = useMemo(() => {
-    const firstReady = vehicles.find((v) => v.size);
+    const firstReady = vehicles.find((v) => isDiscountEligible(v));
     return firstReady?.uid || null;
   }, [vehicles]);
 
-  // 展示层：如果还没人选尺寸，就把折后价展示在第一辆卡片
-  const displayDiscountUid = useMemo(
-    () => discountUid ?? vehicles[0]?.uid ?? null,
-    [discountUid, vehicles]
-  );
+  // 展示层：若还没人选尺寸，则把折后价展示在第一辆「非 D」卡片；如果所有车都是 D，则不展示
+  const displayDiscountUid = useMemo(() => {
+    if (discountUid) return discountUid;
+    const firstNonD = vehicles.find((v) => v.packageId !== "D");
+    return firstNonD?.uid ?? null;
+  }, [discountUid, vehicles]);
 
   // 合计
   const grandTotal = useMemo(() => {
@@ -541,7 +542,7 @@ export default function LuxuryPackages() {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
       if (!pkg || !v.size) return sum;
       const base = pkg.price[v.size];
-      const isDiscounted = v.uid === discountUid;
+      const isDiscounted = v.uid === discountUid; // discountUid 已排除 D
       const discountedBase = Math.max(0, base - (isDiscounted ? NEW_USER_DISCOUNT : 0));
       const addonSum = Object.entries(v.addons || {}).reduce((s, [key, val]) => {
         if (!val.selected) return s;
@@ -559,9 +560,9 @@ export default function LuxuryPackages() {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
       if (!pkg || !v.size) {
         return { key: v.uid, title: `Vehicle ${idx + 1}`, ready: false };
-        }
+      }
       const base = pkg.price[v.size];
-      const isDiscounted = v.uid === discountUid;
+      const isDiscounted = v.uid === discountUid; // 已排除 D
       const discount = isDiscounted ? Math.min(NEW_USER_DISCOUNT, base) : 0;
       const addonList = Object.entries(v.addons || {})
         .filter(([, val]) => val?.selected)

@@ -175,6 +175,9 @@ export default function BookingModal({
   const [emailForCode, setEmailForCode] = useState("");
   const [codeSentAt, setCodeSentAt] = useState(null);
 
+  // ✅ 防止重复上报转化
+  const conversionFiredRef = useRef(false);
+
   // Toast / 结果弹窗
   const [toast, setToast] = useState(null);
   const [resultModal, setResultModal] = useState(null);
@@ -392,6 +395,20 @@ export default function BookingModal({
         order_table,
       });
 
+      // ✅ 两封邮件都成功后：上报 Google Ads 转化（只触发一次）
+      if (!conversionFiredRef.current) {
+        try {
+          if (typeof window !== "undefined" && typeof window.gtag === "function") {
+            window.gtag("event", "conversion", {
+              send_to: "AW-17460884767/X3BoCIui3oQbEJ_q_4VB",
+            });
+          }
+          conversionFiredRef.current = true;
+        } catch (e) {
+          console.warn("Conversion report failed:", e);
+        }
+      }
+
       // 显示结果弹窗
       setResultModal({
         name,
@@ -599,6 +616,7 @@ export default function BookingModal({
                 onChange={(d) => {
                   if (!d) return;
                   const next = new Date(d);
+                  // 如果用户第一次只点了日期（时间=00:00），或之前没选过时间，则默认 09:00
                   if (!dateTime || (d.getHours() === 0 && d.getMinutes() === 0)) {
                     next.setHours(9, 0, 0, 0);
                   }

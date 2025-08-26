@@ -1,37 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail Lab Car Wash</title>
 
-    <!-- 基本 favicon（标签页图标） -->
+    <!-- ✅ SEO 关键词标题 -->
+    <title>Mobile Car Wash in Auckland | Detail Lab Car Wash</title>
+
+    <!-- ✅ 强关键词 meta 描述 -->
+    <meta name="description" content="Auckland's mobile car wash experts. We come to you for exterior hand wash, interior vacuum, leather care & polishing. Eco-friendly service Auckland-wide. New customers get $20 off!" />
+    <meta name="keywords" content="Auckland car wash, mobile car wash, car detailing, hand car wash, mobile detailing, car cleaning Auckland, eco-friendly car wash, interior vacuum, car polish Auckland" />
+
+    <!-- ✅ favicon 设置 -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
-
-    <!-- PNG 图标（Chrome、Android、Google 搜索等使用） -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
-
-    <!-- Apple Touch Icon（iOS 桌面快捷方式） -->
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-    <!-- Web App Manifest -->
     <link rel="manifest" href="/site.webmanifest" />
-
-    <!-- 主题颜色（Chrome 移动端工具栏背景色） -->
     <meta name="theme-color" content="#ffffff" />
 
-    <!-- 结构化数据：用于展示 Google Logo -->
+    <!-- ✅ Open Graph 分享优化 -->
+    <meta property="og:title" content="Mobile Car Wash in Auckland | Detail Lab Car Wash" />
+    <meta property="og:description" content="Eco-friendly mobile car wash and car detailing service in Auckland. Hand wash, interior vacuum, leather care & polishing. New customers get $20 off!" />
+    <meta property="og:image" content="https://www.detaillabcarwash.co.nz/logo.png" />
+    <meta property="og:url" content="https://www.detaillabcarwash.co.nz" />
+    <meta property="og:type" content="website" />
+
+    <!-- ✅ Twitter 分享卡片 -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mobile Car Wash in Auckland | Detail Lab Car Wash" />
+    <meta name="twitter:description" content="We provide eco-friendly mobile car cleaning across Auckland. New customers get $20 off!" />
+    <meta name="twitter:image" content="https://www.detaillabcarwash.co.nz/logo.png" />
+
+    <!-- ✅ Google 结构化数据 -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
+      "@type": "MobileService",
       "name": "Detail Lab Car Wash",
-      "url": "https://www.detaillabcarwash.com",
-      "logo": "https://www.detaillabcarwash.com/logo.png"
+      "areaServed": {
+        "@type": "Place",
+        "name": "Auckland"
+      },
+      "serviceType": "Mobile Car Wash and Detailing",
+      "provider": {
+        "@type": "Organization",
+        "name": "Detail Lab Car Wash",
+        "url": "https://www.detaillabcarwash.co.nz",
+        "email": "detaillabcarwash@gmail.com",
+        "telephone": "+64 21 056 9202",
+        "logo": "https://www.detaillabcarwash.co.nz/logo.png"
+      },
+      "availableChannel": {
+        "@type": "ServiceChannel",
+        "serviceUrl": "https://www.detaillabcarwash.co.nz",
+        "availableLanguage": ["English", "Chinese"]
+      }
     }
     </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

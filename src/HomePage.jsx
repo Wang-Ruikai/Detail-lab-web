@@ -4,7 +4,7 @@ import Carousel from "./Carousel";
 import LuxuryPackages from "./LuxuryPackages";
 import Pricing from "./Pricing";
 
-const heroImages = ["/images/wash1.jpg", "/images/wash2.jpg", "/images/wash3.jpg", "/images/wash4.jpg"];
+const heroImages = ["/images/wash1.jpg", "/images/wash2.jpg", "/images/wash3.jpg", "/images/wash4.jpg","/images/wash6.jpg", "/images/wash7.jpg",];
 
 export default function HomePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

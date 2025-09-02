@@ -2,65 +2,75 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- ✅ SEO 关键词标题 -->
-    <title>Mobile Car detailing in Auckland | Book now - We come to you</title>
+    <!-- Primary SEO -->
+    <title>Mobile Car detailing in Auckland | Book now - We come to you.</title>
+    <meta name="description" content="Premium Car Wash & Detailing for a Showroom Finish. Give your vehicle the care it deserves with our expert car detailing services. From a quick refresh to a full interior and exterior treatment, our trained team delivers high-quality, personalized results every time. Book your appointment today and experience the DetailLab difference." />
 
-    <!-- ✅ 强关键词 meta 描述 -->
-    <meta name="description" content="Premium Car Wash & Detailing for a Showroom Finish. Give your vehicle the care it deserves with our expert car detailing services. From a quick refresh to a full interior and exterior treatment, our trained team delivers high-quality, personalized results every time. Book your appointment today and experience the DetailLab difference.
-" />
-    <meta name="keywords" content="car wash, auckland car wash, mobile car wash, car detailing, hand car wash, mobile detailing, car cleaning Auckland, eco-friendly car wash, interior vacuum, car polish Auckland" />
+    <!-- Canonical / hreflang -->
+    <link rel="canonical" href="https://www.detaillabcarwash.co.nz/" />
+    <link rel="alternate" hreflang="en-NZ" href="https://www.detaillabcarwash.co.nz/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.detaillabcarwash.co.nz/" />
 
-    <!-- ✅ favicon 设置 -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <!-- Favicons (all exist in /public) -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#ffffff" />
 
-    <!-- ✅ Open Graph 分享优化 -->
-    <meta property="og:title" content="Mobile Car Wash in Auckland | Detail Lab Car Wash" />
-    <meta property="og:description" content="Eco-friendly mobile car wash and car detailing service in Auckland. Hand wash, interior vacuum, leather care & polishing. New customers get $20 off!" />
-    <meta property="og:image" content="https://www.detaillabcarwash.co.nz/logo.png" />
-    <meta property="og:url" content="https://www.detaillabcarwash.co.nz" />
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="Detail Lab Car Wash" />
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mobile Car detailing in Auckland | Book now - We come to you." />
+    <meta property="og:description" content="Premium Car Wash & Detailing for a Showroom Finish. Give your vehicle the care it deserves with our expert car detailing services. From a quick refresh to a full interior and exterior treatment, our trained team delivers high-quality, personalized results every time. Book your appointment today and experience the DetailLab difference." />
+    <meta property="og:url" content="https://www.detaillabcarwash.co.nz/" />
+    <!-- Using existing image: /public/images/wash6.jpg -->
+    <meta property="og:image" content="https://www.detaillabcarwash.co.nz/images/wash6.jpg" />
 
-    <!-- ✅ Twitter 分享卡片 -->
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mobile Car Wash in Auckland | Detail Lab Car Wash" />
-    <meta name="twitter:description" content="We provide eco-friendly mobile car cleaning across Auckland. New customers get $20 off!" />
-    <meta name="twitter:image" content="https://www.detaillabcarwash.co.nz/logo.png" />
+    <meta name="twitter:title" content="Mobile Car detailing in Auckland | Book now - We come to you." />
+    <meta name="twitter:description" content="Premium Car Wash & Detailing for a Showroom Finish. Give your vehicle the care it deserves with our expert car detailing services. From a quick refresh to a full interior and exterior treatment, our trained team delivers high-quality, personalized results every time. Book your appointment today and experience the DetailLab difference." />
+    <meta name="twitter:image" content="https://www.detaillabcarwash.co.nz/images/wash6.jpg" />
 
-    <!-- ✅ Google 结构化数据 -->
+    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "MobileService",
+      "@type": "AutoWash",
       "name": "Detail Lab Car Wash",
-      "areaServed": {
-        "@type": "Place",
-        "name": "Auckland"
-      },
-      "serviceType": "Mobile Car Wash and Detailing",
+      "url": "https://www.detaillabcarwash.co.nz/",
+      "image": "https://www.detaillabcarwash.co.nz/images/wash6.jpg",
+      "description": "Premium Car Wash & Detailing for a Showroom Finish. Give your vehicle the care it deserves with our expert car detailing services. From a quick refresh to a full interior and exterior treatment, our trained team delivers high-quality, personalized results every time. Book your appointment today and experience the DetailLab difference.",
+      "areaServed": "Auckland, New Zealand",
+      "priceRange": "$",
+      "telephone": "+64 21 056 9202",
+      "email": "detaillabcarwash@gmail.com",
       "provider": {
         "@type": "Organization",
         "name": "Detail Lab Car Wash",
-        "url": "https://www.detaillabcarwash.co.nz",
-        "email": "detaillabcarwash@gmail.com",
-        "telephone": "+64 21 056 9202",
+        "url": "https://www.detaillabcarwash.co.nz/",
         "logo": "https://www.detaillabcarwash.co.nz/logo.png"
       },
-      "availableChannel": {
-        "@type": "ServiceChannel",
-        "serviceUrl": "https://www.detaillabcarwash.co.nz",
-        "availableLanguage": ["English", "Chinese"]
+      "potentialAction": {
+        "@type": "ReserveAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.detaillabcarwash.co.nz/#booking",
+          "inLanguage": "en-NZ",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/MobileWebPlatform"
+          ]
+        }
       }
     }
     </script>
   </head>
-
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

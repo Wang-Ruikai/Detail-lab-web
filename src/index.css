@@ -136,3 +136,34 @@ button:focus-visible {
 .bk-datepicker-popper { z-index: 99999 !important; }
 .react-datepicker__portal { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.06); }
 .react-datepicker__portal .react-datepicker { max-width: min(560px,96vw); max-height: 92vh; overflow: hidden; border-radius: 12px; }
+/* 强制 DatePicker 下拉层在最上面 */
+.bk-datepicker-popper {
+  z-index: 99999 !important;
+}
+
+/* 如果上层容器（如 .carousel）用了 overflow: hidden，会裁切子元素 */
+/* 只对日期选择器的 Popper 保持可见 */
+.react-datepicker-popper {
+  z-index: 99999 !important;
+}
+/* 让弹窗容器允许下拉层“探出”出来（保持下拉模式的前提下非常关键） */
+.bk-modal {
+  position: relative;
+  overflow: visible;             /* ← 不能是 hidden/auto，否则会裁切 popper */
+  z-index: 20001;
+}
+
+/* DatePicker 的弹层：抬高层级以压住页面上的图片/轮播/按钮等 */
+.bk-datepicker-popper,
+.react-datepicker-popper {
+  z-index: 20002 !important;
+}
+
+/* 如果你的轮播或横幅被设过较高 z-index，统一压低，避免和弹层抢层级 */
+.carousel,
+.carousel-image,
+.hero-image,
+.image-section {
+  position: relative;
+  z-index: 0 !important;
+}

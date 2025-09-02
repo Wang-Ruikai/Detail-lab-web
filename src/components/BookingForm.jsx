@@ -630,6 +630,10 @@ export default function BookingModal({
                 minDate={new Date()}
                 includeTimes={generateBusinessTimes(dateTime || new Date())}
                 placeholderText="Pick date & time"
+                /* 关键：把弹层挂到 #root，绕开 overflow/z-index 问题 */
+                withPortal
+                portalId="root"
+                popperClassName="bk-datepicker-popper"
               />
             </label>
 

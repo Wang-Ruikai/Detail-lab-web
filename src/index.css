@@ -78,3 +78,61 @@ button:focus-visible {
     border-color: #ccc;
   }
 }
+/* 1) 把整个预订弹窗的层级提高到页面最顶层 */
+.bk-overlay {
+  position: fixed;      /* 如果不是 fixed，请加上 */
+  inset: 0;
+  z-index: 20000;       /* 高于页面所有内容/滚动条 */
+}
+
+/* 2) 弹窗主体本身也给个更高层级（可选但稳妥） */
+.bk-modal {
+  position: relative;
+  z-index: 20001;
+  overflow: auto;       /* 保持你原有的可滚动行为 */
+}
+
+/* 3) DatePicker 的下拉层（我们在 JSX 里用了 popperClassName） */
+.bk-datepicker-popper {
+  z-index: 20002 !important;   /* 比 overlay/modal 再高一层 */
+}
+
+/* 4) 保险：控制弹层大小，避免超出视口时被裁切/被滚动条挡住 */
+.bk-datepicker-popper .react-datepicker {
+  max-width: min(560px, 96vw);
+  max-height: 70vh;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.bk-datepicker-popper .react-datepicker__time-container .react-datepicker__time {
+  max-height: 70vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* （可选）若你的底部大图/轮播写过很高的 z-index，这里统一压低一下 */
+.carousel, .image-section, .hero-image {
+  z-index: 1;
+}
+/* DatePicker 的弹层永远在最上面 */
+.bk-datepicker-popper { 
+  z-index: 99999 !important;
+}
+
+/* 可选：Portal 的面板在视口内居中（不想要遮罩可设为 transparent） */
+.react-datepicker__portal {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,.06);
+}
+.react-datepicker__portal .react-datepicker {
+  max-width: min(560px, 96vw);
+  max-height: 92vh;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.bk-datepicker-popper { z-index: 99999 !important; }
+.react-datepicker__portal { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.06); }
+.react-datepicker__portal .react-datepicker { max-width: min(560px,96vw); max-height: 92vh; overflow: hidden; border-radius: 12px; }

@@ -10,7 +10,7 @@ const TEMPLATE_ID_CODE = "template_noiq6ou";
 const TEMPLATE_ID_CUSTOMER = "template_9jahz8r";
 const TEMPLATE_ID_ADMIN = "template_o7gjjgh";
 
-// ---------- Toast（不改页面布局） ----------
+// ---------- Toast ----------
 function Toast({ toast, onClose }) {
   if (!toast) return null;
   return (
@@ -40,7 +40,7 @@ function Toast({ toast, onClose }) {
   );
 }
 
-// ---------- 提交成功弹窗（不改原主弹窗结构） ----------
+// ---------- 提交成功弹窗 ----------
 function ResultModal({ data, onClose }) {
   const modalRef = useRef(null);
 
@@ -163,7 +163,7 @@ export default function BookingModal({
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
-  const [dateTime, setDateTime] = useState(null); // 默认空
+  const [dateTime, setDateTime] = useState(null);
 
   // 验证码状态
   const [codeSent, setCodeSent] = useState(false);
@@ -175,7 +175,6 @@ export default function BookingModal({
   const [emailForCode, setEmailForCode] = useState("");
   const [codeSentAt, setCodeSentAt] = useState(null);
 
-  // ✅ 防止重复上报转化
   const conversionFiredRef = useRef(false);
 
   // Toast / 结果弹窗
@@ -195,7 +194,7 @@ export default function BookingModal({
     return () => clearInterval(t);
   }, [resendIn]);
 
-  // 弹窗定位（保持你原来的滚动定位）
+  // 弹窗定位
   const modalRef = useRef(null);
   useEffect(() => {
     if (open && modalRef.current) {
@@ -228,7 +227,7 @@ export default function BookingModal({
 
   if (!open) return null;
 
-  // 营业时间 09:00–17:00（15 分钟步进）
+  // 营业时间 09:00–17:00
   const generateBusinessTimes = (baseDate) => {
     const base = baseDate || new Date();
     const times = [];
@@ -243,7 +242,7 @@ export default function BookingModal({
     return times;
   };
 
-  // 订单表 HTML 注入
+  // 订单表 HTML
   function buildOrderTable(lines = []) {
     const rows = (lines || [])
       .filter((l) => l.ready)
@@ -272,15 +271,6 @@ export default function BookingModal({
               <td style="padding:2px 4px;color:#6b7280">Base</td>
               <td style="padding:2px 4px;text-align:right;white-space:nowrap;color:#6b7280">$${l.base}</td>
             </tr>
-            ${
-              l.discount > 0
-                ? `
-              <tr>
-                <td style="padding:2px 4px;color:#0a7a1f">New customer discount</td>
-                <td style="padding:2px 4px;text-align:right;white-space:nowrap;color:#0a7a1f">- $${l.discount}</td>
-              </tr>`
-                : ""
-            }
             ${addons}
           </table>`;
       })
@@ -320,7 +310,7 @@ export default function BookingModal({
     }
   };
 
-  // 校验验证码（10分钟有效）
+  // 校验验证码
   const handleVerify = () => {
     if (!codeSent) return;
     if (email.trim() !== emailForCode) {
@@ -341,7 +331,7 @@ export default function BookingModal({
     }
   };
 
-  // 提交（两封邮件）
+  // 提交
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValid) return;
@@ -395,7 +385,6 @@ export default function BookingModal({
         order_table,
       });
 
-      // ✅ 两封邮件都成功后：上报 Google Ads 转化（只触发一次）
       if (!conversionFiredRef.current) {
         try {
           if (typeof window !== "undefined" && typeof window.gtag === "function") {
@@ -409,7 +398,6 @@ export default function BookingModal({
         }
       }
 
-      // 显示结果弹窗
       setResultModal({
         name,
         email,
@@ -420,7 +408,6 @@ export default function BookingModal({
         grand_total: grandTotal,
       });
 
-      // 修改地址栏为“确认页”URL（不跳转）
       try {
         window.history.pushState({}, "", "/booking-confirmed");
       } catch {}
@@ -434,7 +421,6 @@ export default function BookingModal({
     }
   };
 
-  // 当显示结果弹窗时，隐藏背后的预约弹窗（不改变原样式类）
   const bookingVisibility = resultModal ? "hidden" : "visible";
 
   return (
@@ -446,7 +432,6 @@ export default function BookingModal({
         onClose={() => {
           setResultModal(null);
           onClose?.();
-          // 关闭时把 URL 改回首页，再刷新
           try {
             window.history.pushState({}, "", "/");
           } catch {}
@@ -454,7 +439,6 @@ export default function BookingModal({
         }}
       />
 
-      {/* 预约弹窗（保持原布局 class），仅在结果弹窗出现时可见性隐藏 */}
       <div
         className="bk-overlay"
         role="dialog"
@@ -463,7 +447,6 @@ export default function BookingModal({
         style={{ visibility: bookingVisibility }}
       >
         <div className="bk-modal" ref={modalRef}>
-          {/* 头部 */}
           <div className="bk-head">
             <h3>Booking Information</h3>
             <button className="bk-close" onClick={onClose} aria-label="Close booking">
@@ -471,7 +454,6 @@ export default function BookingModal({
             </button>
           </div>
 
-          {/* 订单摘要（结构不变） */}
           <div className="bk-summary">
             <div className="bk-summary-title">Order summary</div>
             {orderLines
@@ -488,12 +470,6 @@ export default function BookingModal({
                     </span>
                     <span>${l.base}</span>
                   </div>
-                  {l.discount > 0 && (
-                    <div className="bk-line-sub bk-discount">
-                      <span>New customer discount</span>
-                      <span>- ${l.discount}</span>
-                    </div>
-                  )}
                   {l.dChoice && (
                     <div className="bk-line-sub">
                       <span>Cleaning focus</span>
@@ -518,7 +494,6 @@ export default function BookingModal({
             </div>
           </div>
 
-          {/* 表单（结构不变） */}
           <form onSubmit={handleSubmit} className="bk-form">
             <label className="bk-label">
               Name
@@ -616,7 +591,6 @@ export default function BookingModal({
                 onChange={(d) => {
                   if (!d) return;
                   const next = new Date(d);
-                  // 如果用户第一次只点了日期（时间=00:00），或之前没选过时间，则默认 09:00
                   if (!dateTime || (d.getHours() === 0 && d.getMinutes() === 0)) {
                     next.setHours(9, 0, 0, 0);
                   }
@@ -630,7 +604,6 @@ export default function BookingModal({
                 minDate={new Date()}
                 includeTimes={generateBusinessTimes(dateTime || new Date())}
                 placeholderText="Pick date & time"
-                /* 唯一新增：为下拉层设置自定义类，方便控制高度与层级 */
                 popperClassName="bk-datepicker-popper"
               />
             </label>

@@ -233,3 +233,10 @@
   .package-card.active .package-desc { color: #fff; }
   .package-card:not(.active) .package-desc { color: #1e3a8a; }
 }
+/* 移动端隐藏 DatePicker 的输入框，只保留点击触发 */
+@media (max-width: 768px) {
+  .datepicker-input {
+    pointer-events: none; /* 禁止手动输入 */
+    caret-color: transparent; /* 隐藏光标 */
+  }
+}

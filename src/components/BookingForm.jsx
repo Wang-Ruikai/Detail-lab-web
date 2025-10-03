@@ -4,11 +4,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import emailjs from "@emailjs/browser";
 
-// ---- EmailJS（与你项目一致）----
+// ---- EmailJS ----
 const SERVICE_ID = "service_g9dym5v";
 const TEMPLATE_ID_CODE = "template_noiq6ou";
 const TEMPLATE_ID_CUSTOMER = "template_9jahz8r";
-const TEMPLATE_ID_ADMIN = "template_o7gjjgh";
+// const TEMPLATE_ID_ADMIN = "template_o7gjjgh"; // ❌ 已删除，不再使用
 
 // ---------- Toast ----------
 function Toast({ toast, onClose }) {
@@ -362,18 +362,6 @@ export default function BookingModal({
 
     try {
       await emailjs.send(SERVICE_ID, TEMPLATE_ID_CUSTOMER, {
-        email: email.trim(),
-        name,
-        phone,
-        date_time_human,
-        address,
-        map_link,
-        order_id,
-        grand_total: grandTotal,
-        order_table,
-      });
-
-      await emailjs.send(SERVICE_ID, TEMPLATE_ID_ADMIN, {
         email: email.trim(),
         name,
         phone,

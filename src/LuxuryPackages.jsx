@@ -109,7 +109,7 @@ const PACKAGES = [
   },
 ];
 
-const SIZE_DETAILS = { S: "(Sedan)", M: "(Wagon/SUV)", L: "(7-seater / MPV)" };
+const SIZE_DETAILS = { S: "(Sedan)", M: "(Wagon/SUV)", L: "(7-seater / MPV / Ute)" };
 
 const ADDONS = [
   { key: "fabric", name: "Fabric Seat Cleaning", price: 30, quantity: true, max: 4 },

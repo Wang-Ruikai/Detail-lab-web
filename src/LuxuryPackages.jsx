@@ -109,12 +109,24 @@ const PACKAGES = [
   },
 ];
 
-// ✅ 更新：L 的说明去掉 Ute；新增 UTE（仅 C 用到）
-const SIZE_DETAILS = {
-  S: "(Sedan)",
-  M: "(Wagon/SUV)",
-  L: "(7-seater / MPV)",
-  UTE: "(Ute)",
+/** ========= 尺寸标签（按套餐区分） =========
+ *  - C 套餐：L 不带 UTE，另有独立 UTE 按钮
+ *  - 其他套餐：不显示 UTE 按钮，L 标签包含 UTE
+ */
+const getSizeDetails = (pkgId) => {
+  if (pkgId === "C") {
+    return {
+      S: "(Sedan)",
+      M: "(Wagon/SUV)",
+      L: "(7-seater / MPV)",
+      UTE: "(Ute)",
+    };
+  }
+  return {
+    S: "(Sedan)",
+    M: "(Wagon/SUV)",
+    L: "(7-seater / MPV / UTE)",
+  };
 };
 
 const ADDONS = [
@@ -131,7 +143,7 @@ const ADDONS = [
 function VehicleCard({ value, onChange }) {
   const pkg = PACKAGES.find((p) => p.id === value.packageId);
 
-  // 当选择了 UTE 但不是 C 套餐时，计价按 L（不改变 UI 已选的 size 值，避免状态抖动）
+  // 非 C 套餐若 size=UTE，计价按 L（UI 不显示 UTE，但安全兜底）
   const effectiveSize = value.size === "UTE" && pkg?.id !== "C" ? "L" : value.size;
   const basePriceRaw = pkg && effectiveSize ? pkg.price[effectiveSize] : 0;
 
@@ -225,20 +237,19 @@ function VehicleCard({ value, onChange }) {
         </div>
       </div>
 
-      {/* 尺寸/价格：C 显示 UTE；其他只显示 S/M/L */}
+      {/* 尺寸/价格：C 显示 UTE；其他只显示 S/M/L（且 L 标签含 UTE） */}
       {pkg && (
         <div className="price-row">
           {(() => {
             const showUte = pkg.id === "C";
             const orderedSizes = showUte ? ["S", "M", "UTE", "L"] : ["S", "M", "L"];
             const iconIndexMap = { S: 1, M: 2, L: 3, UTE: 4 };
+            const labels = getSizeDetails(pkg.id);
 
-            // 注意：非 C 套餐不渲染 UTE；若 state 中仍是 UTE，计价已在上方用 effectiveSize= L 处理
             return orderedSizes
               .filter((s) => pkg.price[s] !== undefined || s === "UTE")
               .map((size) => {
-                const price =
-                  size === "UTE" && !showUte ? pkg.price.L : pkg.price[size];
+                const price = size === "UTE" && !showUte ? pkg.price.L : pkg.price[size];
                 const iconIndex = iconIndexMap[size] || 1;
 
                 return (
@@ -254,7 +265,7 @@ function VehicleCard({ value, onChange }) {
                     />
                     <div className="price-info">
                       <span className="size-label">
-                        {size} {SIZE_DETAILS[size] || ""}
+                        {size} {labels[size] || ""}
                       </span>
                       <div className="price-line">
                         <span className="new-price">${price}</span>
@@ -369,7 +380,7 @@ export default function LuxuryPackages() {
       { uid: crypto.randomUUID(), name: "", packageId: "A", size: null, detailChoice: null, addons: {} },
     ]);
   const removeVehicle = (uid) => setVehicles((v) => v.filter((x) => x.uid !== uid));
-  const updateVehicle = (uid, next) => setVehicles((v) => v.map((x) => (x.uid === uid ? next : x)));
+  const updateVehicle = (uid, next) => setVehicles((v) => (v.map((x) => (x.uid === uid ? next : x))));
 
   const grandTotal = useMemo(() => {
     return vehicles.reduce((sum, v) => {
@@ -395,7 +406,6 @@ export default function LuxuryPackages() {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
       if (!pkg || !v.size) return { key: v.uid, title: `Vehicle ${idx + 1}`, ready: false };
 
-      // ✅ 明细里也用同样的 L 替代逻辑，保持一致
       const effectiveSize = v.size === "UTE" && pkg.id !== "C" ? "L" : v.size;
       const base = pkg.price[effectiveSize];
 
@@ -415,7 +425,7 @@ export default function LuxuryPackages() {
         key: v.uid,
         title: v.name?.trim() || `Vehicle ${idx + 1}`,
         pkgName: pkg.name,
-        size: effectiveSize,                     // 明细中按生效尺寸显示
+        size: effectiveSize, // 明细中显示生效尺寸
         dChoice: pkg.id === "D" ? v.detailChoice : null,
         base,
         addons: addonList,

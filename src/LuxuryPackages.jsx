@@ -57,7 +57,7 @@ const PACKAGES = [
     name: "Package C",
     description: "Complete Shampoo Detailing",
     // ✅ L: 309；新增 UTE: 279
-    price: { S: 229, M: 249, L: 309, UTE: 279 },
+    price: { S: 229, M: 249, L: 319, UTE: 279 },
     exterior: [
       "Tyre Cleaning",
       "Rim Cleaning",

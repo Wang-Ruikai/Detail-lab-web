@@ -57,7 +57,7 @@ const PACKAGES = [
     name: "Package C",
     description: "Complete Shampoo Detailing",
     // ✅ L: 309；新增 UTE: 279
-    price: { S: 229, M: 249, L: 319, UTE: 279 },
+    price: { S: 229, M: 249, L: 309, UTE: 279 },
     exterior: [
       "Tyre Cleaning",
       "Rim Cleaning",
@@ -109,7 +109,7 @@ const PACKAGES = [
   },
 ];
 
-// ✅ 更新：L 的说明去掉 Ute；新增 UTE
+// ✅ 更新：L 的说明去掉 Ute；新增 UTE（仅 C 用到）
 const SIZE_DETAILS = {
   S: "(Sedan)",
   M: "(Wagon/SUV)",
@@ -130,7 +130,10 @@ const ADDONS = [
 /* ===================== 单车卡片 ===================== */
 function VehicleCard({ value, onChange }) {
   const pkg = PACKAGES.find((p) => p.id === value.packageId);
-  const basePriceRaw = pkg && value.size ? pkg.price[value.size] : 0;
+
+  // 当选择了 UTE 但不是 C 套餐时，计价按 L（不改变 UI 已选的 size 值，避免状态抖动）
+  const effectiveSize = value.size === "UTE" && pkg?.id !== "C" ? "L" : value.size;
+  const basePriceRaw = pkg && effectiveSize ? pkg.price[effectiveSize] : 0;
 
   const addonEntries = Object.entries(value.addons || {});
   const addonLines = addonEntries
@@ -147,6 +150,7 @@ function VehicleCard({ value, onChange }) {
 
   const setPackage = (id) =>
     onChange({ ...value, packageId: id, size: null, detailChoice: null, addons: {} });
+
   const setSize = (size) => onChange({ ...value, size });
 
   const toggleAddon = (key) => {
@@ -165,7 +169,7 @@ function VehicleCard({ value, onChange }) {
     onChange({ ...value, addons: { ...prev, [key]: { ...cur, selected: true, qty: newQty } } });
   };
 
-  const canShowExtras = pkg && value.size && (pkg.id !== "D" || !!value.detailChoice);
+  const canShowExtras = pkg && effectiveSize && (pkg.id !== "D" || !!value.detailChoice);
   const fabricSelectedOnNonC = pkg?.id !== "C" && Boolean(value.addons?.fabric?.selected);
   const switchToC = () => onChange({ ...value, packageId: "C", size: value.size || null, detailChoice: null, addons: {} });
 
@@ -221,18 +225,22 @@ function VehicleCard({ value, onChange }) {
         </div>
       </div>
 
-      {/* 尺寸/价格（S → M → UTE → L） */}
+      {/* 尺寸/价格：C 显示 UTE；其他只显示 S/M/L */}
       {pkg && (
         <div className="price-row">
           {(() => {
-            const orderedSizes = ["S", "M", "UTE", "L"]; // ✅ 顺序定义
+            const showUte = pkg.id === "C";
+            const orderedSizes = showUte ? ["S", "M", "UTE", "L"] : ["S", "M", "L"];
             const iconIndexMap = { S: 1, M: 2, L: 3, UTE: 4 };
 
+            // 注意：非 C 套餐不渲染 UTE；若 state 中仍是 UTE，计价已在上方用 effectiveSize= L 处理
             return orderedSizes
-              .filter((s) => pkg.price[s] !== undefined)
+              .filter((s) => pkg.price[s] !== undefined || s === "UTE")
               .map((size) => {
-                const price = pkg.price[size];
+                const price =
+                  size === "UTE" && !showUte ? pkg.price.L : pkg.price[size];
                 const iconIndex = iconIndexMap[size] || 1;
+
                 return (
                   <div
                     key={size}
@@ -260,7 +268,7 @@ function VehicleCard({ value, onChange }) {
       )}
 
       {/* D 套餐内/外选择 */}
-      {pkg?.id === "D" && value.size && (
+      {pkg?.id === "D" && effectiveSize && (
         <div className="detail-block" style={{ marginTop: 14 }}>
           <h4 style={{ marginBottom: 8 }}>Please select your cleaning focus:</h4>
           <div className="choice-row" style={{ gap: 12 }}>
@@ -297,7 +305,7 @@ function VehicleCard({ value, onChange }) {
           {fabricSelectedOnNonC && (
             <div className="recommend-banner">
               For a full upholstery shampoo, we recommend <strong>Package C</strong>.
-              <button onClick={switchToC}>Switch to C</button>
+              <button className="switch-btn" onClick={switchToC}>Switch to C</button>
             </div>
           )}
           <div className="addon-grid">
@@ -367,7 +375,11 @@ export default function LuxuryPackages() {
     return vehicles.reduce((sum, v) => {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
       if (!pkg || !v.size) return sum;
-      const base = pkg.price[v.size];
+
+      // ✅ 非 C 套餐若 size=UTE，按 L 计价
+      const effectiveSize = v.size === "UTE" && pkg.id !== "C" ? "L" : v.size;
+      const base = pkg.price[effectiveSize];
+
       const addonSum = Object.entries(v.addons || {}).reduce((s, [key, val]) => {
         if (!val.selected) return s;
         const meta = ADDONS.find((a) => a.key === key);
@@ -382,7 +394,11 @@ export default function LuxuryPackages() {
     return vehicles.map((v, idx) => {
       const pkg = PACKAGES.find((p) => p.id === v.packageId);
       if (!pkg || !v.size) return { key: v.uid, title: `Vehicle ${idx + 1}`, ready: false };
-      const base = pkg.price[v.size];
+
+      // ✅ 明细里也用同样的 L 替代逻辑，保持一致
+      const effectiveSize = v.size === "UTE" && pkg.id !== "C" ? "L" : v.size;
+      const base = pkg.price[effectiveSize];
+
       const addonList = Object.entries(v.addons || {})
         .filter(([, val]) => val?.selected)
         .map(([key, val]) => {
@@ -391,13 +407,15 @@ export default function LuxuryPackages() {
           const total = (meta?.price || 0) * qty;
           return { label: meta?.label || meta?.name, qty, total };
         });
+
       const addonsTotal = addonList.reduce((s, a) => s + a.total, 0);
       const subtotal = base + addonsTotal;
+
       return {
         key: v.uid,
         title: v.name?.trim() || `Vehicle ${idx + 1}`,
         pkgName: pkg.name,
-        size: v.size,
+        size: effectiveSize,                     // 明细中按生效尺寸显示
         dChoice: pkg.id === "D" ? v.detailChoice : null,
         base,
         addons: addonList,

@@ -30,7 +30,7 @@ const PACKAGES = [
     id: "B",
     name: "Package B",
     description: "Premium full-detailing service",
-    price: { S: 149, M: 169, L: 199 }, // ✅ 已改价
+    price: { S: 149, M: 169, L: 199 },
     exterior: [
       "Tyre Cleaning",
       "Rim Cleaning",
@@ -56,7 +56,8 @@ const PACKAGES = [
     id: "C",
     name: "Package C",
     description: "Complete Shampoo Detailing",
-    price: { S: 229, M: 249, L: 279 },
+    // ✅ L: 309；新增 UTE: 279
+    price: { S: 229, M: 249, L: 319, UTE: 279 },
     exterior: [
       "Tyre Cleaning",
       "Rim Cleaning",
@@ -74,13 +75,12 @@ const PACKAGES = [
       "Trunk Vacuum",
       "Leather Conditioning",
       "Interior Glass & Piano Panel Clean",
-      "Mat Shampoo Extraction",
       "Leather Deep Clean (Horsehair Brush + Agent)",
     ],
     upholstery: [
       "All Seating Areas",
       "Floor Surfaces",
-      "Mats & Carpet",
+      "Mats",
       "Boot Area",
       "Door Panels (if applicable)",
     ],
@@ -109,7 +109,13 @@ const PACKAGES = [
   },
 ];
 
-const SIZE_DETAILS = { S: "(Sedan)", M: "(Wagon/SUV)", L: "(7-seater / MPV / Ute)" };
+// ✅ 更新：L 的说明去掉 Ute；新增 UTE
+const SIZE_DETAILS = {
+  S: "(Sedan)",
+  M: "(Wagon/SUV)",
+  L: "(7-seater / MPV)",
+  UTE: "(Ute)",
+};
 
 const ADDONS = [
   { key: "fabric", name: "Fabric Seat Cleaning", price: 30, quantity: true, max: 4 },
@@ -124,7 +130,6 @@ const ADDONS = [
 /* ===================== 单车卡片 ===================== */
 function VehicleCard({ value, onChange }) {
   const pkg = PACKAGES.find((p) => p.id === value.packageId);
-
   const basePriceRaw = pkg && value.size ? pkg.price[value.size] : 0;
 
   const addonEntries = Object.entries(value.addons || {});
@@ -134,13 +139,7 @@ function VehicleCard({ value, onChange }) {
       const meta = ADDONS.find((a) => a.key === k);
       const qty = meta?.quantity ? (v.qty || 1) : 1;
       const lineTotal = (meta?.price || 0) * qty;
-      return {
-        key: k,
-        label: meta?.label || meta?.name,
-        qty,
-        price: meta?.price || 0,
-        lineTotal,
-      };
+      return { key: k, label: meta?.label || meta?.name, qty, price: meta?.price || 0, lineTotal };
     });
 
   const addonsSubtotal = addonLines.reduce((s, l) => s + l.lineTotal, 0);
@@ -148,20 +147,12 @@ function VehicleCard({ value, onChange }) {
 
   const setPackage = (id) =>
     onChange({ ...value, packageId: id, size: null, detailChoice: null, addons: {} });
-
   const setSize = (size) => onChange({ ...value, size });
 
   const toggleAddon = (key) => {
     const prev = value.addons || {};
     const cur = prev[key] || { selected: false, qty: 1 };
-    const next = {
-      ...prev,
-      [key]: {
-        ...cur,
-        selected: !cur.selected,
-        qty: cur.selected ? 1 : cur.qty || 1,
-      },
-    };
+    const next = { ...prev, [key]: { ...cur, selected: !cur.selected, qty: cur.selected ? 1 : cur.qty || 1 } };
     onChange({ ...value, addons: next });
   };
 
@@ -171,37 +162,20 @@ function VehicleCard({ value, onChange }) {
     const prev = value.addons || {};
     const cur = prev[key] || { selected: true, qty: 1 };
     const newQty = Math.min(Math.max(1, (cur.qty || 1) + delta), max);
-    onChange({
-      ...value,
-      addons: { ...prev, [key]: { ...cur, selected: true, qty: newQty } },
-    });
+    onChange({ ...value, addons: { ...prev, [key]: { ...cur, selected: true, qty: newQty } } });
   };
 
   const canShowExtras = pkg && value.size && (pkg.id !== "D" || !!value.detailChoice);
   const fabricSelectedOnNonC = pkg?.id !== "C" && Boolean(value.addons?.fabric?.selected);
+  const switchToC = () => onChange({ ...value, packageId: "C", size: value.size || null, detailChoice: null, addons: {} });
 
-  const switchToC = () =>
-    onChange({ ...value, packageId: "C", size: value.size || null, detailChoice: null, addons: {} });
-
-  // 样式定义
+  // 样式
   const focusCardBase = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 8,
-    padding: "10px 14px",
-    borderRadius: 10,
-    border: "2px solid #e5e7eb",
-    background: "#fff",
-    cursor: "pointer",
-    fontWeight: 700,
-    color: "#1e3a8a",
-    userSelect: "none",
+    display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 14px",
+    borderRadius: 10, border: "2px solid #e5e7eb", background: "#fff",
+    cursor: "pointer", fontWeight: 700, color: "#1e3a8a", userSelect: "none",
   };
-  const focusCardActive = {
-    borderColor: "#1e3a8a",
-    boxShadow: "0 6px 16px rgba(30,58,138,.15)",
-    background: "#ecf3ff",
-  };
+  const focusCardActive = { borderColor: "#1e3a8a", boxShadow: "0 6px 16px rgba(30,58,138,.15)", background: "#ecf3ff" };
 
   return (
     <div className="package-details" style={{ marginTop: 16 }}>
@@ -224,10 +198,7 @@ function VehicleCard({ value, onChange }) {
         <div className="detail-block">
           <h4>Exterior Care</h4>
           <ul>
-            {(pkg?.id === "D" && value.detailChoice === "Interior"
-              ? []
-              : pkg?.exterior || []
-            ).map((item, i) => (
+            {(pkg?.id === "D" && value.detailChoice === "Interior" ? [] : pkg?.exterior || []).map((item, i) => (
               <li key={`ext-${i}`}>{item}</li>
             ))}
           </ul>
@@ -235,10 +206,7 @@ function VehicleCard({ value, onChange }) {
         <div className="detail-block">
           <h4>Interior Care</h4>
           <ul>
-            {(pkg?.id === "D" && value.detailChoice === "Exterior"
-              ? []
-              : pkg?.interior || []
-            ).map((item, i) => (
+            {(pkg?.id === "D" && value.detailChoice === "Exterior" ? [] : pkg?.interior || []).map((item, i) => (
               <li key={`int-${i}`}>{item}</li>
             ))}
           </ul>
@@ -246,37 +214,48 @@ function VehicleCard({ value, onChange }) {
             <>
               <h4 style={{ marginTop: 10 }}>Upholstery Shampoo</h4>
               <ul>
-                {pkg.upholstery.map((item, i) => (
-                  <li key={`uph-${i}`}>{item}</li>
-                ))}
+                {pkg.upholstery.map((item, i) => <li key={`uph-${i}`}>{item}</li>)}
               </ul>
             </>
           )}
         </div>
       </div>
 
-      {/* 尺寸/价格 */}
+      {/* 尺寸/价格（S → M → UTE → L） */}
       {pkg && (
         <div className="price-row">
-          {Object.entries(pkg.price).map(([size, price], idx) => (
-            <div
-              key={size}
-              className={`price-tag ${value.size === size ? "active-size" : ""}`}
-              onClick={() => setSize(size)}
-            >
-              <img
-                src={`/images/icon_vehicle_${idx + 1}_white.png`}
-                alt={`${size} icon`}
-                className="vehicle-icon"
-              />
-              <div className="price-info">
-                <span className="size-label">{size} {SIZE_DETAILS[size]}</span>
-                <div className="price-line">
-                  <span className="new-price">${price}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+          {(() => {
+            const orderedSizes = ["S", "M", "UTE", "L"]; // ✅ 顺序定义
+            const iconIndexMap = { S: 1, M: 2, L: 3, UTE: 4 };
+
+            return orderedSizes
+              .filter((s) => pkg.price[s] !== undefined)
+              .map((size) => {
+                const price = pkg.price[size];
+                const iconIndex = iconIndexMap[size] || 1;
+                return (
+                  <div
+                    key={size}
+                    className={`price-tag ${value.size === size ? "active-size" : ""}`}
+                    onClick={() => setSize(size)}
+                  >
+                    <img
+                      src={`/images/icon_vehicle_${iconIndex}_white.png`}
+                      alt={`${size} icon`}
+                      className="vehicle-icon"
+                    />
+                    <div className="price-info">
+                      <span className="size-label">
+                        {size} {SIZE_DETAILS[size] || ""}
+                      </span>
+                      <div className="price-line">
+                        <span className="new-price">${price}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              });
+          })()}
         </div>
       )}
 
@@ -285,9 +264,7 @@ function VehicleCard({ value, onChange }) {
         <div className="detail-block" style={{ marginTop: 14 }}>
           <h4 style={{ marginBottom: 8 }}>Please select your cleaning focus:</h4>
           <div className="choice-row" style={{ gap: 12 }}>
-            <label
-              style={{ ...focusCardBase, ...(value.detailChoice === "Interior" ? focusCardActive : {}) }}
-            >
+            <label style={{ ...focusCardBase, ...(value.detailChoice === "Interior" ? focusCardActive : {}) }}>
               <input
                 type="radio"
                 name={`detailChoice-${value.uid}`}
@@ -298,10 +275,7 @@ function VehicleCard({ value, onChange }) {
               />
               <span role="img" aria-label="interior">🧼</span> Interior
             </label>
-
-            <label
-              style={{ ...focusCardBase, ...(value.detailChoice === "Exterior" ? focusCardActive : {}) }}
-            >
+            <label style={{ ...focusCardBase, ...(value.detailChoice === "Exterior" ? focusCardActive : {}) }}>
               <input
                 type="radio"
                 name={`detailChoice-${value.uid}`}
@@ -382,7 +356,10 @@ export default function LuxuryPackages() {
   const [showBooking, setShowBooking] = useState(false);
 
   const addVehicle = () =>
-    setVehicles((v) => [...v, { uid: crypto.randomUUID(), name: "", packageId: "A", size: null, detailChoice: null, addons: {} }]);
+    setVehicles((v) => [
+      ...v,
+      { uid: crypto.randomUUID(), name: "", packageId: "A", size: null, detailChoice: null, addons: {} },
+    ]);
   const removeVehicle = (uid) => setVehicles((v) => v.filter((x) => x.uid !== uid));
   const updateVehicle = (uid, next) => setVehicles((v) => v.map((x) => (x.uid === uid ? next : x)));
 
@@ -416,7 +393,17 @@ export default function LuxuryPackages() {
         });
       const addonsTotal = addonList.reduce((s, a) => s + a.total, 0);
       const subtotal = base + addonsTotal;
-      return { key: v.uid, title: v.name?.trim() || `Vehicle ${idx + 1}`, pkgName: pkg.name, size: v.size, dChoice: pkg.id === "D" ? v.detailChoice : null, base, addons: addonList, subtotal, ready: true };
+      return {
+        key: v.uid,
+        title: v.name?.trim() || `Vehicle ${idx + 1}`,
+        pkgName: pkg.name,
+        size: v.size,
+        dChoice: pkg.id === "D" ? v.detailChoice : null,
+        base,
+        addons: addonList,
+        subtotal,
+        ready: true,
+      };
     });
   }, [vehicles]);
 
@@ -445,7 +432,12 @@ export default function LuxuryPackages() {
           </div>
         </div>
       </div>
-      <BookingModal open={showBooking} onClose={() => setShowBooking(false)} grandTotal={grandTotal} orderLines={orderLines} />
+      <BookingModal
+        open={showBooking}
+        onClose={() => setShowBooking(false)}
+        grandTotal={grandTotal}
+        orderLines={orderLines}
+      />
     </section>
   );
 }

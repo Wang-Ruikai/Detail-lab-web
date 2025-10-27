@@ -181,6 +181,7 @@ export default function BookingModal({
   const [verified, setVerified] = useState(false);
   const [emailForCode, setEmailForCode] = useState("");
   const [codeSentAt, setCodeSentAt] = useState(null);
+  const [verifyError, setVerifyError] = useState(""); // ✅ 新增：验证码错误内联提示
 
   const conversionFiredRef = useRef(false);
 
@@ -339,7 +340,7 @@ export default function BookingModal({
   const autoPickedDayRef = useRef(null);
   useEffect(() => {
     if (!open || !selectedYmd || !businessTimes.length) return;
-    if (fullyBooked) {               // ✅ 全满：不自动填充时间
+    if (fullyBooked) {
       setDateTime(null);
       return;
     }
@@ -420,6 +421,7 @@ export default function BookingModal({
       setVerified(false);
       setResendIn(60);
       setCodeSentAt(Date.now());
+      setVerifyError(""); // ✅ 清空错误
       showToast("Verification code sent. Check inbox / spam.");
     } catch (err) {
       console.error("EmailJS error:", err?.status, err?.text || err?.message, err);
@@ -432,20 +434,28 @@ export default function BookingModal({
   /* ===== 校验验证码 ===== */
   const handleVerify = () => {
     if (!codeSent) return;
+
     if (email.trim() !== emailForCode) {
+      setVerified(false);
+      setVerifyError("Email changed. Please send the code again.");
       showToast("Email changed. Please send the code again.", "error");
       return;
     }
+
     if (!codeSentAt || Date.now() - codeSentAt > 10 * 60 * 1000) {
       setVerified(false);
+      setVerifyError("The code expired. Please resend.");
       showToast("The code expired. Please resend.", "error");
       return;
     }
+
     if (codeInput.trim() === generatedCode && generatedCode) {
       setVerified(true);
+      setVerifyError("");
       showToast("Email verified.");
     } else {
       setVerified(false);
+      setVerifyError("Invalid code. Please try again.");
       showToast("Invalid code. Please try again.", "error");
     }
   };
@@ -648,6 +658,7 @@ export default function BookingModal({
                   onChange={(e) => {
                     setEmail(e.target.value);
                     setVerified(false);
+                    setVerifyError(""); // 改邮箱时清理错误
                   }}
                   required
                   style={{ flex: 1 }}
@@ -664,25 +675,42 @@ export default function BookingModal({
               </div>
 
               {codeSent && (
-                <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                  <input
-                    className="bk-input"
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="Enter 6-digit code"
-                    value={codeInput}
-                    onChange={(e) => setCodeInput(e.target.value.replace(/\D/g, ""))}
-                    style={{ flex: 1 }}
-                  />
-                  <button
-                    type="button"
-                    className="bk-btn primary"
-                    onClick={handleVerify}
-                    disabled={!codeInput || codeInput.length < 6 || !codeSent}
-                  >
-                    Verify
-                  </button>
+                <div style={{ display: "flex", gap: 8, marginTop: 8, flexDirection: "column" }}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <input
+                      className={`bk-input ${verifyError ? "is-invalid" : ""}`}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="Enter 6-digit code"
+                      value={codeInput}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/\D/g, "");
+                        setCodeInput(v);
+                        setVerifyError("");
+                        setVerified(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && codeInput?.length === 6 && codeSent) {
+                          handleVerify();
+                        }
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      className="bk-btn primary"
+                      onClick={handleVerify}
+                      disabled={!codeInput || codeInput.length < 6 || !codeSent}
+                    >
+                      Verify
+                    </button>
+                  </div>
+                  {verifyError && (
+                    <div className="bk-error" style={{ marginTop: 4 }}>
+                      {verifyError}
+                    </div>
+                  )}
                 </div>
               )}
               {verified && (

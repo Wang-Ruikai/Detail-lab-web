@@ -3,14 +3,14 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import emailjs from "@emailjs/browser";
+import { getAvailableSlots } from "../utils/availabilityClient"; // ✅ 返回本地时间的 Date[]
 
-// ---- EmailJS ----
+/* ===== EmailJS ===== */
 const SERVICE_ID = "service_g9dym5v";
 const TEMPLATE_ID_CODE = "template_noiq6ou";
 const TEMPLATE_ID_CUSTOMER = "template_9jahz8r";
-// const TEMPLATE_ID_ADMIN = "template_o7gjjgh"; // ❌ 已删除，不再使用
 
-// ---------- Toast ----------
+/* ===== Toast ===== */
 function Toast({ toast, onClose }) {
   if (!toast) return null;
   return (
@@ -40,10 +40,9 @@ function Toast({ toast, onClose }) {
   );
 }
 
-// ---------- 提交成功弹窗 ----------
+/* ===== 提交结果弹窗 ===== */
 function ResultModal({ data, onClose }) {
   const modalRef = useRef(null);
-
   useEffect(() => {
     if (data && modalRef.current) {
       try {
@@ -158,14 +157,22 @@ export default function BookingModal({
   grandTotal = 0,
   orderLines = [],
 }) {
-  // 表单字段
+  /* ===== 表单字段 ===== */
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+
+  // 分离“日期（当天00:00） / 具体时间”
+  const [selectedDate, setSelectedDate] = useState(null);
   const [dateTime, setDateTime] = useState(null);
 
-  // 验证码状态
+  /* ===== 可用时段 ===== */
+  const [availableTimes, setAvailableTimes] = useState([]); // Date[]
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [slotError, setSlotError] = useState("");
+
+  /* ===== 验证码 ===== */
   const [codeSent, setCodeSent] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
   const [resendIn, setResendIn] = useState(0);
@@ -177,7 +184,7 @@ export default function BookingModal({
 
   const conversionFiredRef = useRef(false);
 
-  // Toast / 结果弹窗
+  /* ===== Toast / 结果弹窗 ===== */
   const [toast, setToast] = useState(null);
   const [resultModal, setResultModal] = useState(null);
   const toastTimer = useRef(null);
@@ -187,14 +194,14 @@ export default function BookingModal({
     toastTimer.current = setTimeout(() => setToast(null), ms);
   };
 
-  // 倒计时
+  /* ===== 倒计时 ===== */
   useEffect(() => {
     if (resendIn <= 0) return;
     const t = setInterval(() => setResendIn((s) => s - 1), 1000);
     return () => clearInterval(t);
   }, [resendIn]);
 
-  // 弹窗定位
+  /* ===== 弹窗定位 ===== */
   const modalRef = useRef(null);
   useEffect(() => {
     if (open && modalRef.current) {
@@ -207,42 +214,154 @@ export default function BookingModal({
     }
   }, [open]);
 
-  // 校验
+  /* ===== 校验 ===== */
   const phoneOk = useMemo(() => /^\+?[0-9()\-\s]{6,}$/.test(phone.trim()), [phone]);
   const emailOk = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()), [email]);
   const addressOk = useMemo(() => address.trim().length >= 4, [address]);
 
+  // 👉 强化：所选时间必须是“可用 slot”
   const isValid = useMemo(() => {
+    const dtOk =
+      dateTime &&
+      dateTime instanceof Date &&
+      !isNaN(dateTime.getTime());
     return (
       name.trim() &&
       phoneOk &&
       emailOk &&
       addressOk &&
-      dateTime &&
-      dateTime instanceof Date &&
-      !isNaN(dateTime.getTime()) &&
-      verified
+      dtOk &&
+      verified &&
+      availableTimes.some((t) => t.getTime() === dateTime?.getTime())
     );
-  }, [name, phoneOk, emailOk, addressOk, dateTime, verified]);
+  }, [name, phoneOk, emailOk, addressOk, dateTime, verified, availableTimes]);
 
-  if (!open) return null;
+  /* ===== 预约时长（可按订单换算） ===== */
+  const durationMin = useMemo(() => 90, [orderLines]);
 
-  // 营业时间 09:00–17:00
-  const generateBusinessTimes = (baseDate) => {
-    const base = baseDate || new Date();
-    const times = [];
-    const start = new Date(base);
-    start.setHours(9, 0, 0, 0);
-    const end = new Date(base);
-    end.setHours(17, 0, 0, 0);
-    while (start <= end) {
-      times.push(new Date(start));
-      start.setMinutes(start.getMinutes() + 15);
+  /* ===== 选中的 yyyy-mm-dd（本地时区） ===== */
+  const selectedYmd = useMemo(() => {
+    if (!selectedDate) return null;
+    const y = selectedDate.getFullYear();
+    const m = String(selectedDate.getMonth() + 1).padStart(2, "0");
+    const d = String(selectedDate.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }, [selectedDate]);
+
+  /* ===== 生成营业时间 09:00–16:00 ===== */
+  function genBusinessTimes(ymd, stepMin = 15, openHour = 9, closeHour = 16) {
+    const [y, m, d] = ymd.split("-").map(Number);
+    const start = new Date(y, m - 1, d, openHour, 0, 0, 0);
+    const end = new Date(y, m - 1, d, closeHour, 0, 0, 0);
+    const out = [];
+    for (let t = new Date(start); t <= end; t = new Date(t.getTime() + stepMin * 60000)) {
+      out.push(new Date(t));
     }
-    return times;
+    return out;
+  }
+
+  // 当天营业时间白名单
+  const businessTimes = useMemo(() => {
+    if (!selectedYmd) return [];
+    return genBusinessTimes(selectedYmd);
+  }, [selectedYmd]);
+
+  // 当天营业时间最小/最大（多一层保险）
+  const { minTime, maxTime } = useMemo(() => {
+    if (!selectedDate) return { minTime: null, maxTime: null };
+    const y = selectedDate.getFullYear();
+    const m = selectedDate.getMonth();
+    const d = selectedDate.getDate();
+    return {
+      minTime: new Date(y, m, d, 9, 0, 0, 0),
+      maxTime: new Date(y, m, d, 16, 0, 0, 0),
+    };
+  }, [selectedDate]);
+
+  /* === 隐藏营业时间外的时间项（沿用你已验证可行的做法） === */
+  useEffect(() => {
+    const STYLE_ID = "dp-out-of-hours-hide";
+    if (typeof document === "undefined" || document.getElementById(STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = STYLE_ID;
+    style.textContent = `.react-datepicker__time-list-item.dp-out-of-hours{display:none !important;}`;
+    document.head.appendChild(style);
+  }, []);
+  const isOutOfBusiness = (t) => {
+    const h = t.getHours();
+    const m = t.getMinutes();
+    if (h < 9) return true;
+    if (h > 16) return true;
+    if (h === 16 && m > 0) return true;
+    return false;
   };
 
-  // 订单表 HTML
+  // 拉取可用时段
+  useEffect(() => {
+    if (!open || !selectedYmd) return;
+    setLoadingSlots(true);
+    setSlotError("");
+    setAvailableTimes([]);
+
+    getAvailableSlots(selectedYmd, durationMin)
+      .then((slots) => setAvailableTimes(slots || []))
+      .catch((e) => {
+        console.error(e);
+        setSlotError("Failed to load availability.");
+      })
+      .finally(() => setLoadingSlots(false));
+  }, [open, selectedYmd, durationMin]);
+
+  // 计算“禁用的（已占用）时间”
+  const availableSet = useMemo(
+    () => new Set(availableTimes.map((d) => d.getTime())),
+    [availableTimes]
+  );
+  const excludeTimes = useMemo(
+    () => businessTimes.filter((t) => !availableSet.has(t.getTime())),
+    [businessTimes, availableSet]
+  );
+
+  // ✅ 新增：当天是否“全满”
+  const fullyBooked = useMemo(() => {
+    if (!selectedYmd || loadingSlots) return false;
+    return businessTimes.length > 0 && availableTimes.length === 0;
+  }, [selectedYmd, loadingSlots, businessTimes.length, availableTimes.length]);
+
+  // ✅ 新增守护：一旦全满，清空残留的时间，避免 9:00 留存
+  useEffect(() => {
+    if (fullyBooked && dateTime) {
+      setDateTime(null);
+    }
+  }, [fullyBooked, dateTime]);
+
+  // 选日后自动选当天最早可约时间（避免 00:00 / 双击）
+  const autoPickedDayRef = useRef(null);
+  useEffect(() => {
+    if (!open || !selectedYmd || !businessTimes.length) return;
+    if (fullyBooked) {               // ✅ 全满：不自动填充时间
+      setDateTime(null);
+      return;
+    }
+
+    const firstAvail = businessTimes.find((t) => availableSet.has(t.getTime()));
+
+    const sameDaySelected =
+      dateTime &&
+      selectedDate &&
+      dateTime.getFullYear() === selectedDate.getFullYear() &&
+      dateTime.getMonth() === selectedDate.getMonth() &&
+      dateTime.getDate() === selectedDate.getDate();
+
+    if (sameDaySelected && availableSet.has(dateTime.getTime())) return;
+
+    if (firstAvail && autoPickedDayRef.current !== selectedYmd) {
+      setDateTime(new Date(firstAvail));
+      autoPickedDayRef.current = selectedYmd;
+    }
+  }, [open, selectedYmd, businessTimes, availableSet, dateTime, selectedDate, fullyBooked]);
+
+  /* ===== 订单表 HTML ===== */
   function buildOrderTable(lines = []) {
     const rows = (lines || [])
       .filter((l) => l.ready)
@@ -279,7 +398,7 @@ export default function BookingModal({
     return rows || `<div style="color:#6b7280">No items</div>`;
   }
 
-  // 发送验证码
+  /* ===== 发送验证码 ===== */
   const handleSendCode = async () => {
     if (!emailOk) {
       showToast("Please enter a valid email first.", "error");
@@ -310,7 +429,7 @@ export default function BookingModal({
     }
   };
 
-  // 校验验证码
+  /* ===== 校验验证码 ===== */
   const handleVerify = () => {
     if (!codeSent) return;
     if (email.trim() !== emailForCode) {
@@ -331,7 +450,7 @@ export default function BookingModal({
     }
   };
 
-  // 提交
+  /* ===== 提交 ===== */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValid) return;
@@ -373,6 +492,7 @@ export default function BookingModal({
         order_table,
       });
 
+      // Google Ads 转化上报
       if (!conversionFiredRef.current) {
         try {
           if (typeof window !== "undefined" && typeof window.gtag === "function") {
@@ -381,8 +501,8 @@ export default function BookingModal({
             });
           }
           conversionFiredRef.current = true;
-        } catch (e) {
-          console.warn("Conversion report failed:", e);
+        } catch (e2) {
+          console.warn("Conversion report failed:", e2);
         }
       }
 
@@ -409,7 +529,17 @@ export default function BookingModal({
     }
   };
 
+  /* ===== DatePicker 选择值（用于显示） ===== */
+  const pickerSelected = dateTime || selectedDate || null;
+
+  const todayStart = useMemo(() => {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate(), 0, 0, 0, 0);
+  }, []);
+
   const bookingVisibility = resultModal ? "hidden" : "visible";
+
+  if (!open) return null;
 
   return (
     <>
@@ -575,25 +705,47 @@ export default function BookingModal({
             <label className="bk-label">
               Preferred date &amp; time
               <DatePicker
-                selected={dateTime}
+                selected={pickerSelected}
                 onChange={(d) => {
                   if (!d) return;
-                  const next = new Date(d);
-                  if (!dateTime || (d.getHours() === 0 && d.getMinutes() === 0)) {
-                    next.setHours(9, 0, 0, 0);
+                  const isChoosingTime = d.getHours() !== 0 || d.getMinutes() !== 0;
+                  const dayOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+                  // 单击日期：立即切换日期
+                  setSelectedDate(dayOnly);
+                  if (isChoosingTime) {
+                    // 直接点了时间
+                    setDateTime(new Date(d));
+                  } else {
+                    // 只换了日期 → 等自动选“当天最早可约”
+                    setDateTime(null);
+                    autoPickedDayRef.current = null;
                   }
-                  setDateTime(next);
                 }}
                 showTimeSelect
                 timeFormat="HH:mm"
                 timeIntervals={15}
                 dateFormat="MMMM d, yyyy HH:mm"
                 className="bk-input"
-                minDate={new Date()}
-                includeTimes={generateBusinessTimes(dateTime || new Date())}
-                placeholderText="Pick date & time"
+                minDate={todayStart}
+                placeholderText={
+                  !selectedYmd
+                    ? "Pick date & time"
+                    : loadingSlots
+                    ? "Checking availability..."
+                    : fullyBooked
+                    ? "Fully booked"
+                    : "Pick time"
+                }
+                // 营业时间白名单 + 已占用置灰
+                includeTimes={businessTimes}
+                excludeTimes={excludeTimes}
+                minTime={minTime}
+                maxTime={maxTime}
                 popperClassName="bk-datepicker-popper"
+                // 隐藏营业时间外的选项
+                timeClassName={(t) => (isOutOfBusiness(t) ? "dp-out-of-hours" : undefined)}
               />
+              {slotError && <div className="bk-error">{slotError}</div>}
             </label>
 
             <div className="bk-actions" style={{ gridColumn: "1 / -1" }}>

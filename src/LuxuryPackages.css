@@ -164,9 +164,15 @@
   .bk-modal{border-radius:16px 16px 0 0}
 }
 .bk-error { color:#b91c1c; font-size:12px; margin-top:4px; }
-/* 隐藏时间面板里禁用时间 */
+
+/* 以前：把禁用时间隐藏（导致整列“全白”）
+   现在：展示为灰色且不可点（更直观） */
 .react-datepicker__time-list-item--disabled,
-.react-datepicker__time-list-item--disabled:hover{display:none}
+.react-datepicker__time-list-item--disabled:hover{
+  color:#9ca3af !important;
+  background:transparent !important;
+  cursor:not-allowed !important;
+}
 
 /* ===== Mobile tweaks for services/price/addons ===== */
 @media (max-width:420px){
@@ -193,21 +199,16 @@
 }
 /* === Mobile: 让套餐描述在卡片中居中显示（图片位置的中心）=== */
 @media (max-width: 480px) {
-  /* 维持 2×2 卡片 */
   .slider { gap: 10px; }
-
-  /* 卡片本体：用 flex 把内容居中 */
   .package-card{
     position: relative;
-    min-height: 120px;           /* 保证有可居中的空间 */
+    min-height: 120px;
     padding: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
   }
-
-  /* 标题固定在卡片上沿，描述放中心 */
   .package-name{
     position: absolute;
     top: 10px;
@@ -216,8 +217,6 @@
     margin: 0;
     line-height: 1.15;
   }
-
-  /* 描述居中、两行截断 */
   .package-desc{
     margin: 0;
     font-size: 12px;
@@ -228,20 +227,18 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-
-  /* 选中态是深蓝底 → 描述改成白色，未选中保持品牌蓝 */
   .package-card.active .package-desc { color: #fff; }
   .package-card:not(.active) .package-desc { color: #1e3a8a; }
 }
 /* 移动端隐藏 DatePicker 的输入框，只保留点击触发 */
 @media (max-width: 768px) {
   .datepicker-input {
-    pointer-events: none; /* 禁止手动输入 */
-    caret-color: transparent; /* 隐藏光标 */
+    pointer-events: none;
+    caret-color: transparent;
   }
 }
 .switch-btn {
-  background: #1e3a8a;   /* 主色调：深蓝 */
+  background: #1e3a8a;
   color: #fff;
   padding: 6px 12px;
   border-radius: 6px;
@@ -252,20 +249,19 @@
   border: none;
   transition: all 0.2s ease;
 }
-
 .switch-btn:hover {
-  background: #2563eb;   /* hover 时更亮 */
+  background: #2563eb;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
+
 /* === UTE 图标微调 === */
 .price-tag img[alt*="UTE"],
 .price-tag img[alt*="Ute"] {
-  width: 70px;              /* 稍微放大 10–15% */
+  width: 70px;
   height: auto;
-  transform: translateY(3px);  /* 向下轻轻移动，让车身居中 */
+  transform: translateY(3px);
   object-fit: contain;
 }
-
 /* 移动端时再微缩一点避免撑破行高 */
 @media (max-width: 480px) {
   .price-tag img[alt*="UTE"],
